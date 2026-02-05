@@ -1,0 +1,272 @@
+'use client';
+
+import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import Link from 'next/link';
+import { ChevronDown, ChevronUp } from 'lucide-react';
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  Tooltip,
+  ResponsiveContainer,
+} from 'recharts';
+import { useAuth } from '@/contexts/AuthContext';
+import { useTheme } from '@/contexts/ThemeContext';
+import { useMarket } from '@/contexts/MarketContext';
+import Header from '@/components/Header';
+import Footer from '@/components/Footer';
+import Navigation from '@/components/Navigation';
+import RecordCard from '@/components/RecordCard';
+import { getSummary, getRecordsByCategory, getCategories, CategoryId } from '@/lib/data';
+
+export default function AnalysisPage() {
+  const router = useRouter();
+  const { isAuthenticated } = useAuth();
+  const { theme } = useTheme();
+  const { market, marketConfig } = useMarket();
+
+  const summary = getSummary(market);
+  const categoryNames = getCategories(marketConfig.language);
+  const [expandedCategory, setExpandedCategory] = useState<CategoryId | null>(null);
+
+  useEffect(() => {
+    if (!isAuthenticated) {
+      router.replace('/login');
+    }
+  }, [isAuthenticated, router]);
+
+  if (!isAuthenticated) {
+    return null;
+  }
+
+  // Short names for chart labels
+  const SHORT_NAMES: { [key in CategoryId]: string } = {
+    1: 'Brand',
+    2: 'General',
+    3: 'Competitor',
+    4: 'Commercial',
+    5: 'Transaction',
+  };
+
+  // Get category name by ID
+  const getCategoryName = (catId: CategoryId): string => {
+    const cat = categoryNames.find(c => c.id === catId);
+    return cat?.name || `Category ${catId}`;
+  };
+
+  // Prepare chart data
+  const chartData = Object.entries(summary.byCategory).map(([catId, data]) => ({
+    name: getCategoryName(Number(catId) as CategoryId),
+    shortName: SHORT_NAMES[Number(catId) as CategoryId],
+    total: data.total,
+    critical: data.critical,
+    warning: data.warning,
+    opportunity: data.opportunity,
+    categoryId: Number(catId) as CategoryId,
+  }));
+
+  // Get colors based on theme
+  const colors = {
+    critical: theme === 'dark' ? '#EF4444' : '#DC2626',
+    warning: theme === 'dark' ? '#F59E0B' : '#D97706',
+    opportunity: theme === 'dark' ? '#22C55E' : '#059669',
+    text: theme === 'dark' ? '#FAFAFA' : '#0A0A0A',
+    textMuted: theme === 'dark' ? '#A1A1A1' : '#717171',
+    border: theme === 'dark' ? '#262626' : '#E5E5E5',
+  };
+
+  // Get top triggers for a category
+  const getTopTriggersForCategory = (categoryId: CategoryId) => {
+    const categoryRecords = getRecordsByCategory(categoryId, market);
+    const triggerCounts: { [key: string]: number } = {};
+    categoryRecords.forEach(r => {
+      r.triggers_detected.forEach(t => {
+        triggerCounts[t] = (triggerCounts[t] || 0) + 1;
+      });
+    });
+    return Object.entries(triggerCounts)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 5);
+  };
+
+  return (
+    <div className="flex min-h-screen flex-col bg-background">
+      <Header />
+
+      {/* Desktop navigation */}
+      <div className="hidden border-b border-border bg-surface sm:block">
+        <Navigation />
+      </div>
+
+      <main className="flex-1 pb-20 sm:pb-6">
+        <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6">
+          {/* Page title */}
+          <div className="mb-6">
+            <div className="flex items-center gap-2">
+              <h1 className="text-lg font-semibold text-text sm:text-xl">Category Analysis</h1>
+              <span className="text-lg">{marketConfig.flag}</span>
+            </div>
+            <p className="text-sm text-text-muted">
+              Classification distribution by question type
+            </p>
+          </div>
+
+          {/* Chart */}
+          <div className="mb-6 rounded-lg border border-border bg-surface p-4 sm:p-6">
+            <h2 className="mb-4 text-sm font-medium text-text">Distribution by Category</h2>
+            <div className="h-64 sm:h-80">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={chartData} layout="vertical" margin={{ left: 0, right: 20 }}>
+                  <XAxis type="number" tick={{ fill: colors.textMuted, fontSize: 12 }} />
+                  <YAxis
+                    type="category"
+                    dataKey="shortName"
+                    tick={{ fill: colors.text, fontSize: 12 }}
+                    width={90}
+                  />
+                  <Tooltip
+                    contentStyle={{
+                      backgroundColor: theme === 'dark' ? '#141414' : '#FFFFFF',
+                      border: `1px solid ${colors.border}`,
+                      borderRadius: '8px',
+                      fontSize: '12px',
+                    }}
+                    labelStyle={{ color: colors.text }}
+                  />
+                  <Bar dataKey="critical" stackId="a" fill={colors.critical} name="Critical" />
+                  <Bar dataKey="warning" stackId="a" fill={colors.warning} name="Warning" />
+                  <Bar dataKey="opportunity" stackId="a" fill={colors.opportunity} name="Opportunity" />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+            {/* Legend */}
+            <div className="mt-4 flex justify-center gap-4">
+              <div className="flex items-center gap-1.5">
+                <span className="h-3 w-3 rounded" style={{ backgroundColor: colors.critical }} />
+                <span className="text-xs text-text-muted">Critical</span>
+              </div>
+              <div className="flex items-center gap-1.5">
+                <span className="h-3 w-3 rounded" style={{ backgroundColor: colors.warning }} />
+                <span className="text-xs text-text-muted">Warning</span>
+              </div>
+              <div className="flex items-center gap-1.5">
+                <span className="h-3 w-3 rounded" style={{ backgroundColor: colors.opportunity }} />
+                <span className="text-xs text-text-muted">Opportunity</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Category breakdown cards */}
+          <div className="space-y-4">
+            {chartData.map((cat) => {
+              const isExpanded = expandedCategory === cat.categoryId;
+              const categoryRecords = getRecordsByCategory(cat.categoryId, market);
+              const criticalRecords = categoryRecords.filter(r => r.classification === 'CRITICAL').slice(0, 3);
+              const topTriggers = getTopTriggersForCategory(cat.categoryId);
+
+              return (
+                <div
+                  key={cat.categoryId}
+                  className="rounded-lg border border-border bg-surface"
+                >
+                  {/* Category header - clickable */}
+                  <button
+                    onClick={() => setExpandedCategory(isExpanded ? null : cat.categoryId)}
+                    className="flex w-full items-center justify-between p-4 text-left"
+                  >
+                    <div>
+                      <h3 className="text-sm font-medium text-text">{cat.name}</h3>
+                      <p className="text-xs text-text-muted">{cat.total} records</p>
+                    </div>
+                    <div className="flex items-center gap-4">
+                      {/* Quick stats */}
+                      <div className="hidden items-center gap-3 sm:flex">
+                        <span className="text-xs">
+                          <span className="text-critical">{cat.critical}</span>
+                          <span className="text-text-muted"> critical</span>
+                        </span>
+                        <span className="text-xs">
+                          <span className="text-warning">{cat.warning}</span>
+                          <span className="text-text-muted"> warning</span>
+                        </span>
+                        <span className="text-xs">
+                          <span className="text-opportunity">{cat.opportunity}</span>
+                          <span className="text-text-muted"> oppty</span>
+                        </span>
+                      </div>
+                      {isExpanded ? (
+                        <ChevronUp size={18} className="text-text-muted" />
+                      ) : (
+                        <ChevronDown size={18} className="text-text-muted" />
+                      )}
+                    </div>
+                  </button>
+
+                  {/* Expanded content */}
+                  {isExpanded && (
+                    <div className="border-t border-border p-4">
+                      {/* Stats on mobile */}
+                      <div className="mb-4 flex items-center gap-3 sm:hidden">
+                        <span className="text-xs">
+                          <span className="text-critical">{cat.critical}</span>
+                          <span className="text-text-muted"> critical</span>
+                        </span>
+                        <span className="text-xs">
+                          <span className="text-warning">{cat.warning}</span>
+                          <span className="text-text-muted"> warning</span>
+                        </span>
+                        <span className="text-xs">
+                          <span className="text-opportunity">{cat.opportunity}</span>
+                          <span className="text-text-muted"> oppty</span>
+                        </span>
+                      </div>
+
+                      {/* Top triggers */}
+                      {topTriggers.length > 0 && (
+                        <div className="mb-4">
+                          <span className="text-xs text-text-muted">Top triggers: </span>
+                          <span className="text-xs text-text">
+                            {topTriggers.map(([t, c]) => `${t} (${c})`).join(', ')}
+                          </span>
+                        </div>
+                      )}
+
+                      {/* Critical records preview */}
+                      {criticalRecords.length > 0 && (
+                        <div className="space-y-2">
+                          <span className="text-xs font-medium text-text-muted">
+                            Critical records:
+                          </span>
+                          {criticalRecords.map((record) => (
+                            <RecordCard key={record.id} record={record} showPreview={false} />
+                          ))}
+                        </div>
+                      )}
+
+                      {/* View all link */}
+                      <Link
+                        href={`/betfair/list?category=${cat.categoryId}`}
+                        className="mt-3 inline-block text-xs text-text-muted hover:text-text"
+                      >
+                        View all {cat.name} records →
+                      </Link>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </main>
+
+      <Footer />
+
+      {/* Mobile navigation */}
+      <div className="sm:hidden">
+        <Navigation />
+      </div>
+    </div>
+  );
+}

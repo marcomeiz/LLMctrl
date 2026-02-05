@@ -1,0 +1,5 @@
+.DS_Store
+*.log
+node_modules/
+.vercel
+users_questions_answers.json

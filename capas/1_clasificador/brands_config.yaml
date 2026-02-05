@@ -1,0 +1,349 @@
+# Brand Configuration for LLM Evaluation Pipeline
+# Each brand has its own section with:
+# - competitors: Known competitor brands to detect
+# - own_products: Brand's own product/model names (excluded from competitor detection)
+# - industry: Used to apply industry-specific filters
+
+# Global settings (apply to all brands)
+global:
+  # Social media / non-authoritative sources (excluded from citations)
+  non_source_domains:
+    - facebook.com
+    - youtube.com
+    - twitter.com
+    - x.com
+    - instagram.com
+    - tiktok.com
+    - reddit.com
+    - linkedin.com
+    - pinterest.com
+    - whatsapp.com
+    - telegram.org
+
+  # Generic terms to ignore in brand detection
+  generic_ignore:
+    - app
+    - web
+    - online
+    - live
+    - pro
+    - plus
+    - premium
+    - shop
+    - tips
+    - pros
+    - cons
+    - summary
+    - conclusion
+
+# Industry-specific configurations
+industries:
+  automotive:
+    # Common automotive-related terms to ignore
+    ignore_terms:
+      - ev
+      - suv
+      - phev
+      - bev
+      - ice
+      - mpg
+      - kwh
+      - mph
+      - pcp  # Personal Contract Purchase
+      - hp   # Hire Purchase
+      - lease
+      - leasing
+      - insurance
+      - finance
+      - financing
+      - premium ev
+      - practical tip
+      - quick picks
+      - tbd
+      - keeps
+      - gimmicky tech
+      # Section headers from LLM responses
+      - brand & background
+      - battery & warranty
+      - range & performance
+      - reliability data is still limited
+      - dealer & after-sales
+      - build finish & tech quirks
+      - upcoming & premium picks
+    # Common automotive media/service sources (not competitors)
+    media_sources:
+      # Review sites
+      - autocar
+      - carbuyer
+      - auto express
+      - top gear
+      - what car
+      - parkers
+      - carwow
+      - honest john
+      - the aa
+      - rac
+      - vehiclescore
+      - clean green cars
+      - city am
+      - city west country
+      - electrifying
+      - zecar
+      - electrek
+      - cargurus
+      - speakev
+      # General media
+      - wikipedia
+      - reuters
+      - the sun
+      - moneyweek
+      - trustpilot
+      # Service companies
+      - cinch
+      - carmoney
+      - dick lovett
+      - mcnally ev
+      - jinyu autos
+      - nationwide vehicle contracts
+      - the electric car scheme
+      - ichezhan
+      - hartwell
+
+  betting:
+    ignore_terms:
+      # Core betting terms
+      - exchange
+      - trading
+      - mercado
+      - apuestas
+      - casino
+      - poker
+      - odds
+      - stake
+      - bet
+      - lay
+      - back
+      - cash-out
+      - cashout
+      - freebets
+      - supercuotas
+      - promociones
+      - comisiones
+      - comisión
+      # Sports & competitions (NOT brands)
+      - f1
+      - fórmula
+      - formula
+      - motogp
+      - moto gp
+      - la liga
+      - laliga
+      - premier league
+      - nba
+      - acb
+      - liga endesa
+      - atp
+      - wta
+      - ufc
+      - mma
+      - tenis
+      - fútbol
+      - futbol
+      - baloncesto
+      - béisbol
+      - grand slams
+      - league of legends
+      # Teams (NOT brands)
+      - real madrid
+      - fc barcelona
+      - barcelona
+      - villarreal
+      - alianza madrid
+      # Countries/regions
+      - españa
+      - spain
+      - uk
+      - latam
+      - ue
+      - unión europea
+      # Section headers & generic terms
+      - pros
+      - contras
+      - comparación
+      - características
+      - consejos
+      - consejo
+      - consideraciones
+      - condiciones
+      - resumen
+      - resumen rápido
+      - veredicto
+      - información
+      - interfaz
+      - soporte
+      - servicio
+      - ofertas
+      - ideal
+      - mejor para
+      - tradicional
+      - reguladas
+      - transparencia
+      - valoraciones
+      - valoración general
+      # UI/Platform terms
+      - chat
+      - app store
+      - apple
+      - bizum
+      - mastercard
+      - visa
+      - tarjetas
+      - eur
+      - cet
+      # Regulatory bodies
+      - dgoj
+      - dirección general de ordenación del juego
+      - ukgc
+      - malta gaming authority
+      # Generic Spanish phrases NER picks up
+      - apostar
+      - apostador
+      - apuesta popular
+      - casa popular
+      - trading deportivo
+      - apuestas deportivas
+      - apuestas online
+      - apuestas en tiempo real
+      - apuestas in‑play
+      - apuestas cruzadas
+      - betting exchange
+      - posibilidad de trading
+      - coberturas
+      - cifrado
+      - acceso
+      - empieza
+      - necesitas
+      - podrías
+      - quieres
+      - sigue
+      - calcular
+      - aprovechar
+      - enfoque
+      - clásico
+      - alertas
+      - partido
+      - equipo
+    media_sources:
+      # Odds comparison sites
+      - oddschecker
+      - oddspedia
+      - oddsjet
+      - compare.bet
+      - racing post
+      - sports betting online
+      # Sports media
+      - mundo deportivo
+      - marca
+      - onefootball
+      - sportytrader
+      - dazn
+      - football whispers
+      - gaming today
+      # General media
+      - cadena ser
+      - trustpilot
+      - comparitech
+      - academia de apuestas
+      - arbichat
+      - bethunter
+      - legalbet
+      - apuestasonline
+
+# Brand-specific configurations
+brands:
+  BYD:
+    industry: automotive
+    language: en
+    competitors:
+      - Tesla
+      - BMW
+      - Mercedes
+      - Mercedes-Benz
+      - Audi
+      - Volkswagen
+      - VW
+      - Hyundai
+      - Kia
+      - Nissan
+      - Toyota
+      - Honda
+      - Ford
+      - Polestar
+      - MG
+      - Volvo
+      - Renault
+      - Peugeot
+      - Skoda
+      - Cupra
+      - Seat
+      - Lucid
+      - Rivian
+      - NIO
+      - Xpeng
+      - Li Auto
+      - Zeekr
+      - Ora
+      - GWM
+    own_products:
+      - Seal
+      - Sealion
+      - Dolphin
+      - Atto
+      - Atto 2
+      - Atto 3
+      - Dolphin Surf
+      - Seal 08
+      - Sealion 5
+      - Sealion 7
+      - Sealion 08
+      - Tang
+      - Han
+      - Yuan
+      - Song
+      - Qin
+
+  Betfair:
+    industry: betting
+    language: es
+    competitors:
+      - Bet365
+      - William Hill
+      - Bwin
+      - Codere
+      - 888sport
+      - Sportium
+      - Luckia
+      - Marathonbet
+      - Interwetten
+      - Betway
+      - Unibet
+      - PokerStars
+      - Betdaq
+      - Smarkets
+      - Matchbook
+      - Kirolbet
+      - LeoVegas
+      - BetVictor
+      - Coral
+      - Paf
+      - Tonybet
+      - 20Bet
+      - Megapari
+      - Paripesa
+      - MARCA Apuestas
+      - MarcaApuestas
+    own_products:
+      - Betfair Exchange
+      - Betfair Sportsbook
+      - Betfair Casino
+      - Betfair Poker

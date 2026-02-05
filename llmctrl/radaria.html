@@ -1,0 +1,1504 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LLMctrl | KIA Brand Intelligence</title>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --bg-primary: #0a0a0f;
+            --bg-secondary: #0f0f14;
+            --bg-card: #14141c;
+            --bg-elevated: #1a1a24;
+            --text-primary: #f4f4f5;
+            --text-secondary: #a1a1aa;
+            --text-muted: #71717a;
+            --border: #27272a;
+            --critical: #ef4444;
+            --critical-bg: rgba(239, 68, 68, 0.1);
+            --warning: #f59e0b;
+            --warning-bg: rgba(245, 158, 11, 0.1);
+            --success: #10b981;
+            --success-bg: rgba(16, 185, 129, 0.1);
+            --info: #3b82f6;
+            --info-bg: rgba(59, 130, 246, 0.1);
+            --purple: #8b5cf6;
+            --cyan: #06b6d4;
+        }
+
+        body {
+            font-family: 'JetBrains Mono', monospace;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            line-height: 1.5;
+        }
+
+        .header {
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border);
+            padding: 1rem 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-inner {
+            max-width: 1600px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--critical), var(--warning));
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1.2rem;
+        }
+
+        .logo-img { height: 32px; width: auto; }
+        .logo-text { font-size: 1.25rem; font-weight: 700; letter-spacing: 2px; }
+        .logo-subtitle { font-size: 0.65rem; color: var(--text-muted); letter-spacing: 1px; }
+
+        .header-meta { display: flex; gap: 2rem; align-items: center; }
+        .header-stat { text-align: right; }
+        .header-stat-value { font-size: 1rem; font-weight: 600; color: var(--cyan); }
+        .header-stat-label { font-size: 0.6rem; color: var(--text-muted); text-transform: uppercase; }
+
+        .container { max-width: 1600px; margin: 0 auto; padding: 1.5rem; }
+
+        /* Pain Banner */
+        .pain-banner {
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.12) 0%, rgba(245, 158, 11, 0.08) 100%);
+            border: 1px solid var(--critical);
+            border-radius: 12px;
+            padding: 1.5rem 2rem;
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+
+        .pain-banner::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: var(--critical);
+            border-radius: 12px 0 0 12px;
+        }
+
+        .pain-title {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--critical);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 1rem;
+        }
+
+        .pain-breakdown-detailed {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+        }
+
+        .pain-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.75rem 1rem;
+            background: var(--bg-card);
+            border-radius: 6px;
+            border-left: 3px solid transparent;
+        }
+
+        .pain-row.critical { border-left-color: var(--critical); }
+        .pain-row.warning { border-left-color: var(--warning); }
+        .pain-row.total {
+            background: var(--bg-elevated);
+            border-left-color: var(--purple);
+            margin-top: 0.5rem;
+        }
+
+        .pain-label { font-size: 0.75rem; color: var(--text-secondary); }
+        .pain-row.critical .pain-label { color: var(--critical); }
+        .pain-row.warning .pain-label { color: var(--warning); }
+        .pain-row.total .pain-label { color: var(--text-primary); font-weight: 600; }
+
+        .pain-value { font-size: 1.25rem; font-weight: 700; color: var(--text-primary); }
+        .pain-row.total .pain-value { font-size: 1.5rem; }
+
+        .pain-detail { font-size: 0.65rem; color: var(--text-muted); }
+
+        .pain-methodology {
+            font-size: 0.65rem;
+            color: var(--text-muted);
+            padding-top: 0.75rem;
+            border-top: 1px solid var(--border);
+        }
+
+        .pain-summary {
+            display: flex;
+            gap: 2rem;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border);
+        }
+
+        .pain-summary-item { text-align: center; }
+        .pain-summary-value { font-size: 1.5rem; font-weight: 700; }
+        .pain-summary-value.critical { color: var(--critical); }
+        .pain-summary-value.warning { color: var(--warning); }
+        .pain-summary-value.neutral { color: var(--text-muted); }
+        .pain-summary-value.positive { color: var(--success); }
+        .pain-summary-label { font-size: 0.6rem; color: var(--text-muted); text-transform: uppercase; }
+
+        /* Navigation Tabs */
+        .nav-tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 1rem;
+        }
+
+        .nav-tab {
+            padding: 0.75rem 1.5rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: var(--text-secondary);
+            font-size: 0.75rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .nav-tab:hover {
+            background: var(--bg-elevated);
+            color: var(--text-primary);
+        }
+
+        .nav-tab.active {
+            background: var(--purple);
+            border-color: var(--purple);
+            color: white;
+        }
+
+        .nav-tab .tab-count {
+            margin-left: 0.5rem;
+            padding: 0.15rem 0.5rem;
+            background: rgba(255,255,255,0.2);
+            border-radius: 4px;
+            font-size: 0.65rem;
+        }
+
+        /* View Container */
+        .view-container { display: none; }
+        .view-container.active { display: block; }
+
+        /* Department Section */
+        .department-section {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            margin-bottom: 0.75rem;
+            overflow: hidden;
+        }
+
+        .department-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem 1.25rem;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .department-header:hover {
+            background: var(--bg-elevated);
+        }
+
+        .dept-icon {
+            font-size: 1.2rem;
+            width: 24px;
+            text-align: center;
+        }
+
+        .dept-name {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            flex: 1;
+        }
+
+        .dept-stats {
+            display: flex;
+            gap: 1.5rem;
+            align-items: center;
+        }
+
+        .dept-stat {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+        }
+
+        .dept-stat.questions { color: var(--cyan); }
+        .dept-stat.critical { color: var(--critical); font-weight: 600; }
+        .dept-stat.warning { color: var(--warning); }
+        .dept-stat.impact { color: var(--purple); font-weight: 600; }
+
+        .dept-expand {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            transition: transform 0.2s;
+        }
+
+        .department-section.expanded .dept-expand {
+            transform: rotate(180deg);
+        }
+
+        .department-content {
+            display: none;
+            padding: 0 1.25rem 1.25rem;
+            border-top: 1px solid var(--border);
+        }
+
+        .department-section.expanded .department-content {
+            display: block;
+        }
+
+        .dept-responsible {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            padding: 0.75rem 0;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 1rem;
+        }
+
+        .dept-responsible strong {
+            color: var(--text-secondary);
+        }
+
+        /* Question Cards */
+        .question-section-title {
+            font-size: 0.65rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin: 1rem 0 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .question-section-title.critical { color: var(--critical); }
+        .question-section-title.warning { color: var(--warning); }
+        .question-section-title.ok { color: var(--success); }
+
+        .question-card {
+            background: var(--bg-elevated);
+            border-radius: 6px;
+            padding: 1rem;
+            margin-bottom: 0.75rem;
+            border-left: 3px solid var(--border);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .question-card:hover {
+            background: var(--bg-secondary);
+        }
+
+        .question-card.critical { border-left-color: var(--critical); }
+        .question-card.warning { border-left-color: var(--warning); }
+        .question-card.neutral { border-left-color: var(--text-muted); }
+        .question-card.positive { border-left-color: var(--success); }
+
+        .question-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 0.5rem;
+        }
+
+        .question-badge {
+            font-size: 0.55rem;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .question-badge.critical { background: var(--critical-bg); color: var(--critical); }
+        .question-badge.warning { background: var(--warning-bg); color: var(--warning); }
+        .question-badge.neutral { background: var(--bg-secondary); color: var(--text-muted); }
+        .question-badge.positive { background: var(--success-bg); color: var(--success); }
+
+        .question-text {
+            font-size: 0.8rem;
+            color: var(--text-primary);
+            line-height: 1.4;
+            margin-bottom: 0.75rem;
+        }
+
+        .question-metrics {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 0.75rem;
+            flex-wrap: wrap;
+        }
+
+        .question-metric {
+            font-size: 0.65rem;
+            color: var(--text-muted);
+        }
+
+        .question-metric span { color: var(--text-secondary); font-weight: 500; }
+        .question-metric.pain span { color: var(--critical); }
+        .question-metric.risk span { color: var(--warning); }
+        .question-metric.impact span { color: var(--purple); }
+
+        /* Pain Points */
+        .pain-points {
+            background: var(--bg-secondary);
+            border-radius: 6px;
+            padding: 0.75rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .pain-points-title {
+            font-size: 0.65rem;
+            font-weight: 600;
+            color: var(--critical);
+            margin-bottom: 0.5rem;
+        }
+
+        .pain-point-item {
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+            padding: 0.25rem 0;
+            padding-left: 1rem;
+            position: relative;
+        }
+
+        .pain-point-item::before {
+            content: '•';
+            position: absolute;
+            left: 0;
+            color: var(--critical);
+        }
+
+        .pain-point-severity {
+            font-size: 0.55rem;
+            padding: 0.1rem 0.3rem;
+            border-radius: 3px;
+            margin-left: 0.5rem;
+        }
+
+        .pain-point-severity.HIGH { background: var(--critical-bg); color: var(--critical); }
+        .pain-point-severity.MEDIUM { background: var(--warning-bg); color: var(--warning); }
+
+        /* Sources */
+        .question-sources {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            margin-bottom: 0.5rem;
+        }
+
+        .source-tag {
+            font-size: 0.6rem;
+            padding: 0.2rem 0.5rem;
+            background: var(--bg-secondary);
+            border-radius: 4px;
+            color: var(--text-muted);
+            border-left: 2px solid var(--info);
+        }
+
+        .source-tag.negative { border-left-color: var(--critical); }
+
+        /* OK questions collapsible */
+        .ok-questions-toggle {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 0.75rem 1rem;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 1rem;
+        }
+
+        .ok-questions-toggle:hover {
+            background: var(--bg-elevated);
+        }
+
+        .ok-questions-label {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+        }
+
+        .ok-questions-expand {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+        }
+
+        .ok-questions-content {
+            display: none;
+            margin-top: 0.5rem;
+        }
+
+        .ok-questions-content.expanded {
+            display: block;
+        }
+
+        /* Question mini card for OK questions */
+        .question-mini {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.5rem 0.75rem;
+            background: var(--bg-elevated);
+            border-radius: 4px;
+            margin-bottom: 0.5rem;
+            border-left: 2px solid var(--success);
+            cursor: pointer;
+        }
+
+        .question-mini:hover {
+            background: var(--bg-secondary);
+        }
+
+        .question-mini-text {
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+            flex: 1;
+        }
+
+        .question-mini-score {
+            font-size: 0.6rem;
+            color: var(--success);
+        }
+
+        /* Grid */
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem; }
+        .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem; }
+        @media (max-width: 1200px) { .grid-3, .grid-2 { grid-template-columns: 1fr; } }
+
+        /* Cards */
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .card-header {
+            padding: 1rem 1.25rem;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .card-title {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .card-badge {
+            font-size: 0.65rem;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-weight: 600;
+        }
+
+        .card-badge.critical { background: var(--critical-bg); color: var(--critical); }
+        .card-badge.warning { background: var(--warning-bg); color: var(--warning); }
+        .card-badge.info { background: var(--info-bg); color: var(--info); }
+
+        .card-body { padding: 1.25rem; }
+
+        /* Competitor Matrix */
+        .competitor-list { display: flex; flex-direction: column; gap: 0.75rem; }
+
+        .competitor-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 0.75rem 1rem;
+            background: var(--bg-elevated);
+            border-radius: 6px;
+            border-left: 3px solid transparent;
+        }
+
+        .competitor-item.threat { border-left-color: var(--critical); background: rgba(239, 68, 68, 0.05); }
+
+        .competitor-rank { font-size: 0.7rem; font-weight: 700; color: var(--text-muted); width: 24px; }
+        .competitor-name { font-size: 0.8rem; font-weight: 600; color: var(--text-primary); width: 90px; }
+
+        .competitor-stats { flex: 1; display: flex; flex-direction: column; gap: 0.25rem; }
+        .competitor-wins { font-size: 0.75rem; font-weight: 600; }
+        .competitor-wins.danger { color: var(--critical); }
+        .competitor-wins.none { color: var(--text-muted); }
+        .competitor-mentions { font-size: 0.65rem; color: var(--text-muted); }
+
+        /* Source List */
+        .source-list { display: flex; flex-direction: column; gap: 0.5rem; }
+
+        .source-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.5rem 0.75rem;
+            background: var(--bg-elevated);
+            border-radius: 6px;
+            border-left: 3px solid var(--border);
+        }
+
+        .source-item.negative { border-left-color: var(--critical); }
+        .source-item.mixed { border-left-color: var(--warning); }
+        .source-item.positive { border-left-color: var(--success); }
+        .source-item.neutral { border-left-color: var(--text-muted); }
+
+        .source-indicator { font-size: 0.8rem; width: 20px; text-align: center; }
+        .source-domain { font-size: 0.75rem; color: var(--text-primary); flex: 1; }
+        .source-count { font-size: 0.7rem; color: var(--text-muted); background: var(--bg-secondary); padding: 0.2rem 0.5rem; border-radius: 4px; }
+
+        /* Funnel Chart */
+        .funnel-container { display: flex; flex-direction: column; gap: 0.75rem; }
+
+        .funnel-stage { display: flex; align-items: center; gap: 1rem; }
+        .funnel-label { font-size: 0.7rem; color: var(--text-secondary); width: 110px; text-align: right; }
+
+        .funnel-bar {
+            flex: 1;
+            height: 32px;
+            background: var(--bg-secondary);
+            border-radius: 4px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .funnel-bar-fill {
+            height: 100%;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 0.75rem;
+            font-size: 0.7rem;
+            color: white;
+            transition: width 0.8s ease-out;
+        }
+
+        .funnel-bar-fill.validation { background: linear-gradient(90deg, var(--critical), #b91c1c); }
+        .funnel-bar-fill.consideration { background: linear-gradient(90deg, var(--warning), #d97706); }
+        .funnel-bar-fill.awareness { background: var(--info); }
+        .funnel-bar-fill.transactional { background: var(--purple); }
+        .funnel-bar-fill.other { background: var(--text-muted); }
+
+        .funnel-stats { font-size: 0.65rem; color: var(--text-muted); width: 80px; text-align: right; }
+
+        /* Modal */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0, 0, 0, 0.85);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        .modal-overlay.active { display: flex; }
+
+        .modal {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            max-width: 900px;
+            max-height: 90vh;
+            overflow-y: auto;
+            width: 100%;
+        }
+
+        .modal-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            position: sticky;
+            top: 0;
+            background: var(--bg-card);
+        }
+
+        .modal-title { font-size: 0.9rem; color: var(--text-primary); line-height: 1.4; max-width: 750px; }
+
+        .modal-close {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0;
+            line-height: 1;
+        }
+
+        .modal-close:hover { color: var(--text-primary); }
+
+        .modal-body { padding: 1.5rem; }
+        .modal-section { margin-bottom: 1.5rem; }
+        .modal-section-title { font-size: 0.7rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.75rem; }
+
+        .modal-answer {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            line-height: 1.7;
+            white-space: pre-wrap;
+            background: var(--bg-elevated);
+            padding: 1rem;
+            border-radius: 6px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .modal-metrics { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; }
+
+        .modal-metric {
+            text-align: center;
+            padding: 1rem;
+            background: var(--bg-elevated);
+            border-radius: 6px;
+        }
+
+        .modal-metric-value { font-size: 1.5rem; font-weight: 700; }
+        .modal-metric-value.critical { color: var(--critical); }
+        .modal-metric-value.warning { color: var(--warning); }
+        .modal-metric-value.success { color: var(--success); }
+        .modal-metric-value.info { color: var(--info); }
+        .modal-metric-label { font-size: 0.6rem; color: var(--text-muted); margin-top: 0.25rem; }
+
+        .modal-tags { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+
+        .modal-tag {
+            font-size: 0.65rem;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            background: var(--bg-elevated);
+            color: var(--text-secondary);
+        }
+
+        .modal-tag.negative { border-left: 2px solid var(--critical); }
+        .modal-tag.competitor { border-left: 2px solid var(--warning); }
+        .modal-tag.source { border-left: 2px solid var(--info); }
+        .modal-tag.dept { border-left: 2px solid var(--purple); }
+
+        .consequence-narrative {
+            background: var(--critical-bg);
+            border: 1px solid var(--critical);
+            border-radius: 6px;
+            padding: 1rem;
+        }
+
+        .consequence-narrative-title { font-size: 0.7rem; font-weight: 600; color: var(--critical); margin-bottom: 0.5rem; }
+        .consequence-narrative-text { font-size: 0.8rem; color: var(--text-secondary); line-height: 1.6; }
+
+        .footer {
+            text-align: center;
+            padding: 2rem;
+            color: var(--text-muted);
+            font-size: 0.65rem;
+            border-top: 1px solid var(--border);
+        }
+
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: var(--bg-secondary); }
+        ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-inner">
+            <div class="logo">
+                <img src="logo_iaW1-1536x233-1.webp" alt="Interamplify" class="logo-img">
+                <div>
+                    <div class="logo-text">LLMctrl</div>
+                    <div class="logo-subtitle">LLM Brand Intelligence - Multi-Stakeholder View</div>
+                </div>
+            </div>
+            <div class="header-meta">
+                <div class="header-stat">
+                    <div class="header-stat-value">KIA</div>
+                    <div class="header-stat-label">Brand</div>
+                </div>
+                <div class="header-stat">
+                    <div class="header-stat-value">UK</div>
+                    <div class="header-stat-label">Market</div>
+                </div>
+                <div class="header-stat">
+                    <div class="header-stat-value" id="totalQuestions">197</div>
+                    <div class="header-stat-label">Questions</div>
+                </div>
+                <div class="header-stat">
+                    <div class="header-stat-value">Jan 2026</div>
+                    <div class="header-stat-label">Analysis Date</div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <!-- Pain Banner -->
+        <div class="pain-banner">
+            <div class="pain-title">Revenue at Risk from Negative LLM Responses</div>
+
+            <div class="pain-breakdown-detailed">
+                <div class="pain-row critical">
+                    <span class="pain-label" id="criticalLabel">5 CRITICAL questions</span>
+                    <span class="pain-detail" id="criticalRisk">57% avg abandonment risk</span>
+                    <span class="pain-value" id="criticalImpact">&pound;23.8M/year</span>
+                </div>
+                <div class="pain-row warning">
+                    <span class="pain-label" id="warningLabel">11 WARNING questions</span>
+                    <span class="pain-detail" id="warningRisk">32% avg abandonment risk</span>
+                    <span class="pain-value" id="warningImpact">&pound;29.2M/year</span>
+                </div>
+                <div class="pain-row total">
+                    <span class="pain-label">TOTAL AT RISK</span>
+                    <span class="pain-detail"></span>
+                    <span class="pain-value" id="totalImpact">&pound;52.9M/year</span>
+                </div>
+            </div>
+
+            <div class="pain-methodology">
+                Methodology: 2,000 monthly searches per question &times; 1.2% conversion rate &times; &pound;30K avg vehicle price &times; abandonment risk factor
+            </div>
+
+            <div class="pain-summary">
+                <div class="pain-summary-item">
+                    <div class="pain-summary-value critical" id="criticalCount">5</div>
+                    <div class="pain-summary-label">Critical</div>
+                </div>
+                <div class="pain-summary-item">
+                    <div class="pain-summary-value warning" id="warningCount">11</div>
+                    <div class="pain-summary-label">Warning</div>
+                </div>
+                <div class="pain-summary-item">
+                    <div class="pain-summary-value neutral" id="neutralCount">74</div>
+                    <div class="pain-summary-label">Neutral</div>
+                </div>
+                <div class="pain-summary-item">
+                    <div class="pain-summary-value positive" id="positiveCount">107</div>
+                    <div class="pain-summary-label">Positive</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Navigation Tabs -->
+        <div class="nav-tabs">
+            <button class="nav-tab active" data-view="department" onclick="switchView('department')">
+                Por Departamento <span class="tab-count" id="deptCount">16</span>
+            </button>
+            <button class="nav-tab" data-view="block" onclick="switchView('block')">
+                Por Tipo de Pregunta <span class="tab-count" id="blockCount">5</span>
+            </button>
+            <button class="nav-tab" data-view="analysis" onclick="switchView('analysis')">
+                Analisis Competitivo
+            </button>
+            <button class="nav-tab" data-view="all" onclick="switchView('all')">
+                Todas las Preguntas <span class="tab-count">197</span>
+            </button>
+        </div>
+
+        <!-- View: By Department -->
+        <div class="view-container active" id="view-department">
+            <div id="departmentList"></div>
+        </div>
+
+        <!-- View: By Block -->
+        <div class="view-container" id="view-block">
+            <div id="blockList"></div>
+        </div>
+
+        <!-- View: Competitive Analysis -->
+        <div class="view-container" id="view-analysis">
+            <div class="grid-2">
+                <!-- Competitors -->
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">Competitors Winning Against KIA</div>
+                        <div class="card-badge warning">ORDERED BY WINS</div>
+                    </div>
+                    <div class="card-body">
+                        <div class="competitor-list" id="competitorList"></div>
+                    </div>
+                </div>
+
+                <!-- Sources -->
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">Top Sources Influencing ChatGPT</div>
+                        <div class="card-badge info">BY SENTIMENT</div>
+                    </div>
+                    <div class="card-body">
+                        <div class="source-list" id="sourceList"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card" style="margin-bottom: 1.5rem;">
+                <div class="card-header">
+                    <div class="card-title">Risk by Funnel Stage</div>
+                    <div class="card-badge critical">DANGER SCORE</div>
+                </div>
+                <div class="card-body">
+                    <div class="funnel-container" id="funnelChart"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- View: All Questions -->
+        <div class="view-container" id="view-all">
+            <div id="allQuestionsList"></div>
+        </div>
+    </main>
+
+    <!-- Modal -->
+    <div class="modal-overlay" id="modal">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title" id="modalTitle"></div>
+                <button class="modal-close" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="modal-section">
+                    <div class="modal-section-title">Risk Assessment</div>
+                    <div class="modal-metrics" id="modalMetrics"></div>
+                </div>
+                <div class="modal-section" id="modalConsequence"></div>
+                <div class="modal-section" id="modalPainPoints"></div>
+                <div class="modal-section">
+                    <div class="modal-section-title">LLM Response</div>
+                    <div class="modal-answer" id="modalAnswer"></div>
+                </div>
+                <div class="modal-section">
+                    <div class="modal-section-title">Analysis Tags</div>
+                    <div class="modal-tags" id="modalTags"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        LLMctrl by Interamplify | LLM Brand Intelligence | Multi-Stakeholder Analysis | Jan 2026 | Data verified: 197 questions
+    </footer>
+
+    <script>
+        let radariaData = [];
+        let currentView = 'department';
+
+        const DEPT_ICONS = {
+            'MODELO_EV6': '⚡',
+            'MODELO_EV9': '⚡',
+            'MODELO_EV3': '⚡',
+            'MODELO_SPORTAGE': '🚙',
+            'MODELO_SORENTO': '🚙',
+            'MODELO_NIRO': '🚙',
+            'MODELO_STINGER': '🏎️',
+            'MODELO_CEED': '🚗',
+            'MODELO_PICANTO': '🚗',
+            'MODELO_SELTOS': '🚙',
+            'POSTVENTA': '🔧',
+            'PRECIO_Y_VALOR': '💰',
+            'SEGURIDAD': '🛡️',
+            'MOTOR_Y_RENDIMIENTO': '🔋',
+            'TECNOLOGÍA': '📱',
+            'DISEÑO_Y_ESPACIO': '🎨',
+            'MARCA_Y_REPUTACIÓN': '🏆',
+            'FIABILIDAD': '✅',
+            'GARANTÍA': '📋',
+            'BATERÍA_Y_CARGA': '🔌',
+            'GENERAL': '📊'
+        };
+
+        const BLOCK_NAMES = {
+            '1_DIRECTAS_MARCA': 'Preguntas Directas sobre KIA',
+            '2_COMPARATIVAS': 'Comparaciones con Competidores',
+            '3_COMERCIALES': 'Usuario Genérico (Best Of)',
+            '4_TRANSACCIONAL': 'Usuario Listo para Comprar',
+            '5_MODELOS_ESPECÍFICOS': 'Modelos Específicos'
+        };
+
+        async function loadData() {
+            try {
+                const response = await fetch('radaria_analysis.json');
+                if (response.ok) {
+                    radariaData = await response.json();
+                    verifyData();
+                    renderDashboard();
+                }
+            } catch (e) {
+                console.error('Failed to load data:', e);
+            }
+        }
+
+        function verifyData() {
+            const critical = radariaData.filter(q => q.criticality === 'CRITICAL').length;
+            const warning = radariaData.filter(q => q.criticality === 'WARNING').length;
+            const neutral = radariaData.filter(q => q.criticality === 'NEUTRAL').length;
+            const positive = radariaData.filter(q => q.criticality === 'POSITIVE').length;
+            const total = critical + warning + neutral + positive;
+
+            console.log(`RADARIA Data Verification: ${critical} CRITICAL + ${warning} WARNING + ${neutral} NEUTRAL + ${positive} POSITIVE = ${total}`);
+
+            document.getElementById('criticalCount').textContent = critical;
+            document.getElementById('warningCount').textContent = warning;
+            document.getElementById('neutralCount').textContent = neutral;
+            document.getElementById('positiveCount').textContent = positive;
+            document.getElementById('totalQuestions').textContent = total;
+            document.getElementById('criticalLabel').textContent = `${critical} CRITICAL questions`;
+            document.getElementById('warningLabel').textContent = `${warning} WARNING questions`;
+
+            const criticalData = radariaData.filter(q => q.criticality === 'CRITICAL');
+            const warningData = radariaData.filter(q => q.criticality === 'WARNING');
+
+            const criticalImpact = criticalData.reduce((sum, q) => sum + q.annual_revenue_impact, 0);
+            const warningImpact = warningData.reduce((sum, q) => sum + q.annual_revenue_impact, 0);
+            const totalImpact = criticalImpact + warningImpact;
+
+            const criticalAvgRisk = criticalData.length > 0
+                ? criticalData.reduce((sum, q) => sum + q.abandonment_risk, 0) / criticalData.length
+                : 0;
+            const warningAvgRisk = warningData.length > 0
+                ? warningData.reduce((sum, q) => sum + q.abandonment_risk, 0) / warningData.length
+                : 0;
+
+            document.getElementById('criticalImpact').textContent = `£${(criticalImpact/1000000).toFixed(1)}M/year`;
+            document.getElementById('warningImpact').textContent = `£${(warningImpact/1000000).toFixed(1)}M/year`;
+            document.getElementById('totalImpact').textContent = `£${(totalImpact/1000000).toFixed(1)}M/year`;
+            document.getElementById('criticalRisk').textContent = `${(criticalAvgRisk * 100).toFixed(0)}% avg abandonment risk`;
+            document.getElementById('warningRisk').textContent = `${(warningAvgRisk * 100).toFixed(0)}% avg abandonment risk`;
+
+            // Update tab counts
+            const depts = new Set(radariaData.map(q => q.department));
+            document.getElementById('deptCount').textContent = depts.size;
+        }
+
+        function switchView(view) {
+            currentView = view;
+
+            document.querySelectorAll('.nav-tab').forEach(tab => {
+                tab.classList.toggle('active', tab.dataset.view === view);
+            });
+
+            document.querySelectorAll('.view-container').forEach(container => {
+                container.classList.toggle('active', container.id === `view-${view}`);
+            });
+
+            if (view === 'analysis') {
+                renderCompetitorMatrix();
+                renderSourceList();
+                renderFunnelChart();
+            }
+        }
+
+        function renderDashboard() {
+            renderDepartmentView();
+            renderBlockView();
+            renderAllQuestionsView();
+        }
+
+        function groupBy(array, keyFn) {
+            return array.reduce((groups, item) => {
+                const key = keyFn(item);
+                (groups[key] = groups[key] || []).push(item);
+                return groups;
+            }, {});
+        }
+
+        function renderDepartmentView() {
+            const container = document.getElementById('departmentList');
+            const byDept = groupBy(radariaData, q => q.department);
+
+            // Sort departments by critical count then by total impact
+            const sorted = Object.entries(byDept).sort((a, b) => {
+                const critA = a[1].filter(q => q.criticality === 'CRITICAL').length;
+                const critB = b[1].filter(q => q.criticality === 'CRITICAL').length;
+                if (critB !== critA) return critB - critA;
+
+                const impactA = a[1].reduce((s, q) => s + q.annual_revenue_impact, 0);
+                const impactB = b[1].reduce((s, q) => s + q.annual_revenue_impact, 0);
+                return impactB - impactA;
+            });
+
+            container.innerHTML = sorted.map(([dept, questions]) => {
+                const critCount = questions.filter(q => q.criticality === 'CRITICAL').length;
+                const warnCount = questions.filter(q => q.criticality === 'WARNING').length;
+                const totalImpact = questions.reduce((s, q) => s + q.annual_revenue_impact, 0);
+                const responsible = questions[0]?.responsible_role || 'CMO';
+                const icon = DEPT_ICONS[dept] || '📊';
+                const statusIcon = critCount > 0 ? '🔴' : warnCount > 0 ? '🟡' : '🟢';
+
+                return `
+                    <div class="department-section" data-dept="${dept}">
+                        <div class="department-header" onclick="toggleDepartment('${dept}')">
+                            <div class="dept-icon">${icon}</div>
+                            <div class="dept-name">${statusIcon} ${dept.replace(/_/g, ' ')}</div>
+                            <div class="dept-stats">
+                                <span class="dept-stat questions">${questions.length} preguntas</span>
+                                ${critCount > 0 ? `<span class="dept-stat critical">${critCount} crit</span>` : ''}
+                                ${warnCount > 0 ? `<span class="dept-stat warning">${warnCount} warn</span>` : ''}
+                                <span class="dept-stat impact">£${(totalImpact/1000000).toFixed(1)}M</span>
+                            </div>
+                            <div class="dept-expand">▼</div>
+                        </div>
+                        <div class="department-content">
+                            <div class="dept-responsible"><strong>Responsable:</strong> ${responsible}</div>
+                            ${renderQuestionsByCategory(questions, dept)}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function renderBlockView() {
+            const container = document.getElementById('blockList');
+            const byBlock = groupBy(radariaData, q => q.block);
+
+            const sorted = Object.entries(byBlock).sort((a, b) => a[0].localeCompare(b[0]));
+
+            container.innerHTML = sorted.map(([block, questions]) => {
+                const critCount = questions.filter(q => q.criticality === 'CRITICAL').length;
+                const warnCount = questions.filter(q => q.criticality === 'WARNING').length;
+                const totalImpact = questions.reduce((s, q) => s + q.annual_revenue_impact, 0);
+                const blockName = BLOCK_NAMES[block] || block;
+                const statusIcon = critCount > 0 ? '🔴' : warnCount > 0 ? '🟡' : '🟢';
+
+                return `
+                    <div class="department-section" data-block="${block}">
+                        <div class="department-header" onclick="toggleBlock('${block}')">
+                            <div class="dept-icon">📁</div>
+                            <div class="dept-name">${statusIcon} ${blockName}</div>
+                            <div class="dept-stats">
+                                <span class="dept-stat questions">${questions.length} preguntas</span>
+                                ${critCount > 0 ? `<span class="dept-stat critical">${critCount} crit</span>` : ''}
+                                ${warnCount > 0 ? `<span class="dept-stat warning">${warnCount} warn</span>` : ''}
+                                <span class="dept-stat impact">£${(totalImpact/1000000).toFixed(1)}M</span>
+                            </div>
+                            <div class="dept-expand">▼</div>
+                        </div>
+                        <div class="department-content">
+                            ${renderQuestionsByCategory(questions, block)}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function renderQuestionsByCategory(questions, sectionId) {
+            const critical = questions.filter(q => q.criticality === 'CRITICAL').sort((a,b) => a.pain_score - b.pain_score);
+            const warning = questions.filter(q => q.criticality === 'WARNING').sort((a,b) => a.pain_score - b.pain_score);
+            const neutral = questions.filter(q => q.criticality === 'NEUTRAL');
+            const positive = questions.filter(q => q.criticality === 'POSITIVE');
+            const ok = [...neutral, ...positive];
+
+            let html = '';
+
+            if (critical.length > 0) {
+                html += `<div class="question-section-title critical">🔴 CRITICAL (${critical.length})</div>`;
+                html += critical.map(q => renderQuestionCard(q)).join('');
+            }
+
+            if (warning.length > 0) {
+                html += `<div class="question-section-title warning">🟡 WARNING (${warning.length})</div>`;
+                html += warning.map(q => renderQuestionCard(q)).join('');
+            }
+
+            if (ok.length > 0) {
+                html += `
+                    <div class="ok-questions-toggle" onclick="toggleOkQuestions('${sectionId}')">
+                        <span class="ok-questions-label">🟢 OK Questions (${ok.length})</span>
+                        <span class="ok-questions-expand">▼</span>
+                    </div>
+                    <div class="ok-questions-content" id="ok-${sectionId}">
+                        ${ok.map(q => renderQuestionMini(q)).join('')}
+                    </div>
+                `;
+            }
+
+            return html;
+        }
+
+        function renderQuestionCard(q) {
+            const painPoints = (q.pain_points || []).slice(0, 3);
+            const sources = (q.sources || []).slice(0, 3);
+
+            return `
+                <div class="question-card ${q.criticality.toLowerCase()}" onclick="openModal('${q.id}')">
+                    <div class="question-header">
+                        <span class="question-badge ${q.criticality.toLowerCase()}">${q.criticality}</span>
+                    </div>
+                    <div class="question-text">${q.question}</div>
+                    <div class="question-metrics">
+                        <span class="question-metric pain">Pain Score: <span>${q.pain_score}</span></span>
+                        <span class="question-metric risk">Abandonment: <span>${(q.abandonment_risk * 100).toFixed(0)}%</span></span>
+                        <span class="question-metric impact">Impact: <span>£${(q.annual_revenue_impact/1000000).toFixed(1)}M/yr</span></span>
+                        <span class="question-metric">${q.funnel_stage}</span>
+                    </div>
+                    ${painPoints.length > 0 ? `
+                        <div class="pain-points">
+                            <div class="pain-points-title">📍 Puntos de Dolor:</div>
+                            ${painPoints.map(p => `
+                                <div class="pain-point-item">
+                                    ${p.text}
+                                    <span class="pain-point-severity ${p.severity}">${p.severity}</span>
+                                </div>
+                            `).join('')}
+                        </div>
+                    ` : ''}
+                    ${sources.length > 0 ? `
+                        <div class="question-sources">
+                            ${sources.map(s => `
+                                <span class="source-tag ${s.sentiment === 'NEGATIVE' ? 'negative' : ''}">${s.source_domain}</span>
+                            `).join('')}
+                        </div>
+                    ` : ''}
+                </div>
+            `;
+        }
+
+        function renderQuestionMini(q) {
+            return `
+                <div class="question-mini" onclick="openModal('${q.id}')">
+                    <span class="question-mini-text">${q.question.length > 70 ? q.question.slice(0, 70) + '...' : q.question}</span>
+                    <span class="question-mini-score">+${q.pain_score > 0 ? q.pain_score : 0}</span>
+                </div>
+            `;
+        }
+
+        function renderAllQuestionsView() {
+            const container = document.getElementById('allQuestionsList');
+
+            const sorted = [...radariaData].sort((a, b) => {
+                const critOrder = { 'CRITICAL': 0, 'WARNING': 1, 'NEUTRAL': 2, 'POSITIVE': 3 };
+                if (critOrder[a.criticality] !== critOrder[b.criticality]) {
+                    return critOrder[a.criticality] - critOrder[b.criticality];
+                }
+                return a.pain_score - b.pain_score;
+            });
+
+            container.innerHTML = sorted.map(q => renderQuestionCard(q)).join('');
+        }
+
+        function toggleDepartment(dept) {
+            const section = document.querySelector(`.department-section[data-dept="${dept}"]`);
+            section.classList.toggle('expanded');
+        }
+
+        function toggleBlock(block) {
+            const section = document.querySelector(`.department-section[data-block="${block}"]`);
+            section.classList.toggle('expanded');
+        }
+
+        function toggleOkQuestions(sectionId) {
+            const content = document.getElementById(`ok-${sectionId}`);
+            content.classList.toggle('expanded');
+        }
+
+        function renderCompetitorMatrix() {
+            const container = document.getElementById('competitorList');
+
+            const competitorWins = {};
+            const competitorMentions = {};
+
+            radariaData.forEach(q => {
+                if (q.competition_outcome === 'LOSE' && q.competition_winner) {
+                    competitorWins[q.competition_winner] = (competitorWins[q.competition_winner] || 0) + 1;
+                }
+                (q.competitors_mentioned || []).forEach(c => {
+                    competitorMentions[c.brand] = (competitorMentions[c.brand] || 0) + c.mentions;
+                });
+            });
+
+            const allCompetitors = new Set([
+                ...Object.keys(competitorWins),
+                ...Object.keys(competitorMentions)
+            ]);
+
+            const competitors = Array.from(allCompetitors)
+                .map(brand => ({
+                    brand,
+                    wins: competitorWins[brand] || 0,
+                    mentions: competitorMentions[brand] || 0
+                }))
+                .sort((a, b) => b.wins - a.wins || b.mentions - a.mentions)
+                .slice(0, 10);
+
+            container.innerHTML = competitors.map((c, i) => `
+                <div class="competitor-item ${c.wins > 0 ? 'threat' : ''}">
+                    <div class="competitor-rank">#${i + 1}</div>
+                    <div class="competitor-name">${c.brand}</div>
+                    <div class="competitor-stats">
+                        <span class="competitor-wins ${c.wins > 0 ? 'danger' : 'none'}">
+                            ${c.wins > 0 ? `🔴 Beats KIA ${c.wins}x` : '— No direct wins'}
+                        </span>
+                        <span class="competitor-mentions">Mentioned in ${c.mentions} responses</span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function renderSourceList() {
+            const container = document.getElementById('sourceList');
+
+            const sourceCounts = {};
+            const sourceSentiments = {};
+
+            radariaData.forEach(q => {
+                (q.sources || []).forEach(s => {
+                    sourceCounts[s.source_domain] = (sourceCounts[s.source_domain] || 0) + 1;
+                    if (!sourceSentiments[s.source_domain]) {
+                        sourceSentiments[s.source_domain] = { pos: 0, neg: 0, neu: 0, mix: 0 };
+                    }
+                    if (s.sentiment === 'POSITIVE') sourceSentiments[s.source_domain].pos++;
+                    else if (s.sentiment === 'NEGATIVE') sourceSentiments[s.source_domain].neg++;
+                    else if (s.sentiment === 'MIXED') sourceSentiments[s.source_domain].mix++;
+                    else sourceSentiments[s.source_domain].neu++;
+                });
+            });
+
+            const sources = Object.entries(sourceCounts)
+                .map(([domain, count]) => {
+                    const sent = sourceSentiments[domain];
+                    let sentiment = 'neutral';
+                    let indicator = '○';
+
+                    if (sent.neg > sent.pos && sent.neg > 2) {
+                        sentiment = 'negative';
+                        indicator = '⚠️';
+                    } else if (sent.pos > sent.neg && sent.pos > 2) {
+                        sentiment = 'positive';
+                        indicator = '✅';
+                    } else if (sent.mix > 2 || (sent.neg > 0 && sent.pos > 0)) {
+                        sentiment = 'mixed';
+                        indicator = '◐';
+                    }
+
+                    return { domain, count, sentiment, indicator };
+                })
+                .sort((a, b) => b.count - a.count)
+                .slice(0, 10);
+
+            container.innerHTML = sources.map(s => `
+                <div class="source-item ${s.sentiment}">
+                    <div class="source-indicator">${s.indicator}</div>
+                    <div class="source-domain">${s.domain}</div>
+                    <div class="source-count">${s.count}</div>
+                </div>
+            `).join('');
+        }
+
+        function renderFunnelChart() {
+            const container = document.getElementById('funnelChart');
+
+            const funnelData = {};
+            const stages = ['VALIDATION', 'TRANSACTIONAL', 'CONSIDERATION', 'AWARENESS', 'OTHER'];
+
+            stages.forEach(stage => {
+                const items = radariaData.filter(q => q.funnel_stage === stage);
+                const crit = items.filter(q => q.criticality === 'CRITICAL').length;
+                const warn = items.filter(q => q.criticality === 'WARNING').length;
+                const avgRisk = items.length > 0
+                    ? items.reduce((sum, q) => sum + q.abandonment_risk, 0) / items.length
+                    : 0;
+
+                const dangerScore = (crit * 3) + (warn * 1.5) + (avgRisk * 10);
+
+                funnelData[stage] = {
+                    total: items.length,
+                    critical: crit,
+                    warning: warn,
+                    avgRisk,
+                    dangerScore
+                };
+            });
+
+            const sortedStages = stages.sort((a, b) => funnelData[b].dangerScore - funnelData[a].dangerScore);
+            const maxDanger = Math.max(...sortedStages.map(s => funnelData[s].dangerScore));
+
+            const stageColors = {
+                'VALIDATION': 'validation',
+                'TRANSACTIONAL': 'transactional',
+                'CONSIDERATION': 'consideration',
+                'AWARENESS': 'awareness',
+                'OTHER': 'other'
+            };
+
+            container.innerHTML = sortedStages.map(stage => {
+                const data = funnelData[stage];
+                const width = maxDanger > 0 ? (data.dangerScore / maxDanger) * 100 : 0;
+
+                return `
+                    <div class="funnel-stage">
+                        <div class="funnel-label">${stage}</div>
+                        <div class="funnel-bar">
+                            <div class="funnel-bar-fill ${stageColors[stage]}"
+                                 style="width: ${width}%">
+                                <span>${data.critical > 0 ? `${data.critical} crit` : ''}</span>
+                                <span>${data.warning > 0 ? `${data.warning} warn` : ''}</span>
+                            </div>
+                        </div>
+                        <div class="funnel-stats">${(data.avgRisk * 100).toFixed(0)}% risk</div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function openModal(id) {
+            const item = radariaData.find(q => q.id === id);
+            if (!item) return;
+
+            document.getElementById('modalTitle').textContent = item.question;
+            document.getElementById('modalAnswer').textContent = item.answer;
+
+            const painClass = item.pain_score <= -10 ? 'critical' : item.pain_score <= -5 ? 'warning' : 'info';
+            const abandonClass = item.abandonment_risk >= 0.3 ? 'critical' : item.abandonment_risk >= 0.15 ? 'warning' : 'success';
+
+            document.getElementById('modalMetrics').innerHTML = `
+                <div class="modal-metric">
+                    <div class="modal-metric-value ${painClass}">${item.pain_score}</div>
+                    <div class="modal-metric-label">Pain Score</div>
+                </div>
+                <div class="modal-metric">
+                    <div class="modal-metric-value ${abandonClass}">${(item.abandonment_risk * 100).toFixed(0)}%</div>
+                    <div class="modal-metric-label">Abandonment Risk</div>
+                </div>
+                <div class="modal-metric">
+                    <div class="modal-metric-value warning">${(item.competitor_research_risk * 100).toFixed(0)}%</div>
+                    <div class="modal-metric-label">Competitor Research</div>
+                </div>
+                <div class="modal-metric">
+                    <div class="modal-metric-value info">£${(item.annual_revenue_impact/1000000).toFixed(1)}M</div>
+                    <div class="modal-metric-label">Annual Impact</div>
+                </div>
+            `;
+
+            // Pain Points section
+            const painPoints = item.pain_points || [];
+            if (painPoints.length > 0) {
+                document.getElementById('modalPainPoints').innerHTML = `
+                    <div class="modal-section-title">📍 Puntos de Dolor Identificados</div>
+                    <div class="pain-points" style="background: var(--bg-elevated);">
+                        ${painPoints.map(p => `
+                            <div class="pain-point-item">
+                                ${p.text}
+                                <span class="pain-point-severity ${p.severity}">${p.severity}</span>
+                                ${p.source ? `<span style="font-size:0.55rem;color:var(--text-muted);margin-left:0.5rem;">via ${p.source}</span>` : ''}
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+            } else {
+                document.getElementById('modalPainPoints').innerHTML = '';
+            }
+
+            let narrative = '';
+            if (item.criticality === 'CRITICAL') {
+                narrative = `<strong>CRITICAL:</strong> A potential buyer reading this response has a ${(item.abandonment_risk * 100).toFixed(0)}% probability of abandoning their KIA purchase. With approximately 2,000 monthly searches for this type of question, this translates to an estimated £${(item.monthly_revenue_impact/1000).toFixed(0)}K in monthly lost revenue.`;
+            } else if (item.competition_outcome === 'LOSE') {
+                narrative = `<strong>COMPETITIVE LOSS:</strong> This response explicitly recommends ${item.competition_winner} over KIA. Users reading this have a ${(item.competitor_research_risk * 100).toFixed(0)}% probability of researching ${item.competition_winner} as an alternative, potentially leading to lost sales.`;
+            } else if (item.is_visibility_gap) {
+                narrative = `<strong>VISIBILITY GAP:</strong> KIA is not mentioned in this response despite being a relevant answer. This represents an opportunity loss where potential customers never see KIA as an option.`;
+            } else if (item.criticality === 'WARNING') {
+                narrative = `<strong>WARNING:</strong> This response contains negative indicators that may discourage purchase consideration. ${(item.abandonment_risk * 100).toFixed(0)}% of users may seek alternatives after reading this.`;
+            }
+
+            if (narrative) {
+                document.getElementById('modalConsequence').innerHTML = `
+                    <div class="consequence-narrative">
+                        <div class="consequence-narrative-title">Predicted Business Impact</div>
+                        <div class="consequence-narrative-text">${narrative}</div>
+                    </div>
+                `;
+            } else {
+                document.getElementById('modalConsequence').innerHTML = '';
+            }
+
+            let tags = [];
+
+            // Department tag
+            if (item.department) {
+                tags.push(`<span class="modal-tag dept">${item.department}</span>`);
+            }
+
+            // Block tag
+            if (item.block) {
+                tags.push(`<span class="modal-tag">${item.block}</span>`);
+            }
+
+            (item.negative_triggers || []).forEach(t => {
+                tags.push(`<span class="modal-tag negative">${t}</span>`);
+            });
+
+            (item.competitors_mentioned || []).slice(0, 5).forEach(c => {
+                tags.push(`<span class="modal-tag competitor">${c.brand}: ${c.mentions}</span>`);
+            });
+
+            (item.sources || []).slice(0, 5).forEach(s => {
+                tags.push(`<span class="modal-tag source">${s.source_domain}</span>`);
+            });
+
+            tags.push(`<span class="modal-tag">${item.funnel_stage}</span>`);
+            tags.push(`<span class="modal-tag">${item.response_type}</span>`);
+            tags.push(`<span class="modal-tag">${item.influenceability} influence</span>`);
+
+            document.getElementById('modalTags').innerHTML = tags.join('');
+            document.getElementById('modal').classList.add('active');
+        }
+
+        function closeModal() {
+            document.getElementById('modal').classList.remove('active');
+        }
+
+        document.getElementById('modal').addEventListener('click', (e) => {
+            if (e.target.id === 'modal') closeModal();
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') closeModal();
+        });
+
+        document.addEventListener('DOMContentLoaded', loadData);
+    </script>
+</body>
+</html>

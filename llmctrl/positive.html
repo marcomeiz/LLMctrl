@@ -1,0 +1,1676 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KIA - Posicionamiento IA 2026 | LLMctrl</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@400;500;600;700;800;900&display=swap');
+
+        :root {
+            --primary: #10b981;
+            --primary-bg: rgba(16, 185, 129, 0.1);
+            --primary-glow: rgba(16, 185, 129, 0.4);
+            --accent: #1863DC;
+            --accent-bg: rgba(24, 99, 220, 0.1);
+            --accent-glow: rgba(24, 99, 220, 0.4);
+            --warning: #f59e0b;
+            --warning-bg: rgba(245, 158, 11, 0.1);
+            --highlight: #8b5cf6;
+            --highlight-bg: rgba(139, 92, 246, 0.1);
+            --cyber: #00f0ff;
+            --matrix: #00ff41;
+            --dark: #0a0a0f;
+            --darker: #050508;
+            --card: #12121a;
+            --card-hover: #1a1a25;
+            --text: #ffffff;
+            --text-muted: #8892a0;
+            --border: #1e1e2e;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: 'Inter', -apple-system, sans-serif;
+            background: var(--darker);
+            color: var(--text);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            pointer-events: none;
+            background: repeating-linear-gradient(0deg, rgba(0,0,0,0.1) 0px, rgba(0,0,0,0.1) 1px, transparent 1px, transparent 2px);
+            z-index: 9999;
+            opacity: 0.3;
+        }
+
+        .grid-bg {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background-image: linear-gradient(rgba(16,185,129,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(16,185,129,0.03) 1px, transparent 1px);
+            background-size: 50px 50px;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .orb {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(80px);
+            pointer-events: none;
+            z-index: -1;
+        }
+        .orb-1 { width: 400px; height: 400px; background: var(--primary-glow); top: 10%; left: -10%; opacity: 0.3; }
+        .orb-2 { width: 300px; height: 300px; background: var(--accent-glow); top: 50%; right: -5%; opacity: 0.2; }
+        .orb-3 { width: 350px; height: 350px; background: rgba(139,92,246,0.15); bottom: 10%; left: 30%; opacity: 0.15; }
+
+        .nav {
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            background: rgba(5,5,8,0.8);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+            z-index: 1000;
+            padding: 12px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-brand { display: flex; align-items: center; gap: 12px; }
+        .nav-status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            color: var(--matrix);
+            background: rgba(0,255,65,0.1);
+            padding: 6px 12px;
+            border-radius: 4px;
+            border: 1px solid rgba(0,255,65,0.3);
+        }
+
+        .nav-status .pulse {
+            width: 8px; height: 8px;
+            background: var(--matrix);
+            border-radius: 50%;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(0,255,65,0.7); }
+            50% { opacity: 0.8; box-shadow: 0 0 0 6px rgba(0,255,65,0); }
+        }
+
+        .nav-links { display: flex; gap: 4px; }
+        .nav-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+            padding: 8px 14px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            transition: all 0.3s;
+            border: 1px solid transparent;
+        }
+        .nav-links a:hover { color: var(--text); background: var(--card); border-color: var(--border); }
+        .nav-links a.active { color: var(--primary); background: var(--primary-bg); border-color: var(--primary); }
+
+        .container { max-width: 1400px; margin: 0 auto; padding: 0 40px; }
+
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            padding: 120px 0 80px;
+        }
+
+        .hero-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            align-items: center;
+        }
+
+        .hero-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+            color: var(--cyber);
+            margin-bottom: 24px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        .hero-tag::before { content: '//'; opacity: 0.5; }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            font-weight: 900;
+            line-height: 1.1;
+            margin-bottom: 24px;
+        }
+
+        .hero h1 .gradient {
+            background: linear-gradient(135deg, var(--primary) 0%, #34d399 50%, var(--cyber) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-subtitle {
+            font-size: 1.2rem;
+            color: var(--text-muted);
+            margin-bottom: 40px;
+            max-width: 500px;
+        }
+
+        .hero-cta { display: flex; gap: 16px; }
+
+        .btn {
+            padding: 14px 28px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            text-decoration: none;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            border: none;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 4px 20px var(--primary-glow);
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px var(--primary-glow);
+        }
+
+        .btn-ghost {
+            background: transparent;
+            color: var(--text);
+            border: 1px solid var(--border);
+        }
+        .btn-ghost:hover { background: var(--card); border-color: var(--primary); }
+
+        .hero-terminal {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+        }
+
+        .terminal-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 16px;
+            background: var(--dark);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .terminal-dot { width: 12px; height: 12px; border-radius: 50%; }
+        .terminal-dot.red { background: #ff5f57; }
+        .terminal-dot.yellow { background: #febc2e; }
+        .terminal-dot.green { background: #28c840; }
+
+        .terminal-title {
+            margin-left: auto;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        .terminal-body {
+            padding: 20px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            min-height: 350px;
+        }
+
+        .terminal-line {
+            margin-bottom: 8px;
+            opacity: 0;
+            animation: typeIn 0.3s forwards;
+        }
+        .terminal-line.prompt { color: var(--matrix); }
+        .terminal-line.output { color: var(--text-muted); }
+        .terminal-line.success { color: var(--primary); }
+        .terminal-line.accent { color: var(--accent); }
+        .terminal-line.info { color: var(--cyber); }
+        .terminal-line.highlight { color: var(--highlight); }
+        .terminal-line.warning { color: var(--warning); }
+
+        @keyframes typeIn {
+            from { opacity: 0; transform: translateX(-10px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .terminal-cursor {
+            display: inline-block;
+            width: 10px; height: 18px;
+            background: var(--matrix);
+            animation: blink 1s infinite;
+            vertical-align: middle;
+            margin-left: 4px;
+        }
+
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0; }
+        }
+
+        .section { padding: 100px 0; }
+        .section-header { text-align: center; margin-bottom: 60px; }
+
+        .section-tag {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+            color: var(--primary);
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            margin-bottom: 16px;
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 16px;
+        }
+
+        .section-subtitle {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .big-stats-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .big-stat-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 28px 20px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s;
+        }
+
+        .big-stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 4px;
+        }
+
+        .big-stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        }
+
+        .big-stat-card.directas::before { background: #10b981; }
+        .big-stat-card.directas:hover { border-color: #10b981; }
+        .big-stat-card.directas .big-stat-number { color: #10b981; }
+
+        .big-stat-card.comparativas::before { background: #f59e0b; }
+        .big-stat-card.comparativas:hover { border-color: #f59e0b; }
+        .big-stat-card.comparativas .big-stat-number { color: #f59e0b; }
+
+        .big-stat-card.comerciales::before { background: #8b5cf6; }
+        .big-stat-card.comerciales:hover { border-color: #8b5cf6; }
+        .big-stat-card.comerciales .big-stat-number { color: #8b5cf6; }
+
+        .big-stat-card.transaccionales::before { background: #ec4899; }
+        .big-stat-card.transaccionales:hover { border-color: #ec4899; }
+        .big-stat-card.transaccionales .big-stat-number { color: #ec4899; }
+
+        .big-stat-card.modelos::before { background: #3b82f6; }
+        .big-stat-card.modelos:hover { border-color: #3b82f6; }
+        .big-stat-card.modelos .big-stat-number { color: #3b82f6; }
+
+        .big-stat-number {
+            font-size: 3rem;
+            font-weight: 900;
+            line-height: 1;
+            margin-bottom: 12px;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .big-stat-label { font-size: 0.95rem; font-weight: 600; margin-bottom: 6px; }
+        .big-stat-sub { font-size: 0.8rem; color: var(--text-muted); }
+
+        .cat-section {
+            padding: 100px 0;
+            background: linear-gradient(180deg, var(--darker) 0%, var(--dark) 50%, var(--darker) 100%);
+        }
+
+        .cat-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 20px;
+            margin-bottom: 60px;
+        }
+
+        .cat-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 24px;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cat-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0;
+            width: 4px; height: 100%;
+            transition: all 0.3s;
+        }
+
+        .cat-card:hover {
+            transform: translateX(8px);
+            background: var(--card-hover);
+        }
+        .cat-card:hover::before { width: 6px; }
+
+        .cat-card.directas::before { background: #10b981; }
+        .cat-card.comparativas::before { background: #f59e0b; }
+        .cat-card.comerciales::before { background: #8b5cf6; }
+        .cat-card.transaccionales::before { background: #ec4899; }
+        .cat-card.modelos::before { background: #3b82f6; }
+
+        .cat-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+
+        .cat-icon { font-size: 1.8rem; }
+
+        .cat-count {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.4rem;
+            font-weight: 700;
+        }
+
+        .cat-card.directas .cat-count { color: #10b981; }
+        .cat-card.comparativas .cat-count { color: #f59e0b; }
+        .cat-card.comerciales .cat-count { color: #8b5cf6; }
+        .cat-card.transaccionales .cat-count { color: #ec4899; }
+        .cat-card.modelos .cat-count { color: #3b82f6; }
+
+        .cat-title { font-size: 1rem; font-weight: 700; margin-bottom: 4px; }
+        .cat-desc { font-size: 0.8rem; color: var(--text-muted); }
+
+        .charts-row {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 24px;
+        }
+
+        .chart-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 28px;
+        }
+
+        .chart-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 24px;
+        }
+
+        .chart-title {
+            font-size: 1rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .chart-badge {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7rem;
+            padding: 4px 8px;
+            background: var(--primary-bg);
+            color: var(--primary);
+            border-radius: 4px;
+        }
+
+        .chart-container { height: 280px; }
+
+        .explorer-section { padding: 100px 0; }
+
+        .explorer-controls {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-bottom: 32px;
+            padding: 20px;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+        }
+
+        .filter-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 18px;
+            background: var(--dark);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .filter-btn:hover { border-color: var(--primary); color: var(--text); }
+        .filter-btn.active { background: var(--primary); border-color: var(--primary); color: white; }
+
+        .filter-btn .count {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            padding: 2px 6px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 4px;
+        }
+        .filter-btn.active .count { background: rgba(255,255,255,0.2); }
+
+        .filter-separator { width: 1px; height: 30px; background: var(--border); margin: 0 8px; }
+
+        .filter-info {
+            margin-left: auto;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .questions-cloud {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            padding: 24px;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            max-height: 500px;
+            overflow-y: auto;
+        }
+
+        .q-chip {
+            padding: 10px 18px;
+            background: var(--dark);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 0.85rem;
+            color: var(--text);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .q-chip:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+
+        .q-chip.cat-directas { border-left: 3px solid #10b981; }
+        .q-chip.cat-directas:hover { background: rgba(16,185,129,0.1); border-color: #10b981; }
+        .q-chip.cat-comparativas { border-left: 3px solid #f59e0b; }
+        .q-chip.cat-comparativas:hover { background: rgba(245,158,11,0.1); border-color: #f59e0b; }
+        .q-chip.cat-comerciales { border-left: 3px solid #8b5cf6; }
+        .q-chip.cat-comerciales:hover { background: rgba(139,92,246,0.1); border-color: #8b5cf6; }
+        .q-chip.cat-transaccionales { border-left: 3px solid #ec4899; }
+        .q-chip.cat-transaccionales:hover { background: rgba(236,72,153,0.1); border-color: #ec4899; }
+        .q-chip.cat-modelos { border-left: 3px solid #3b82f6; }
+        .q-chip.cat-modelos:hover { background: rgba(59,130,246,0.1); border-color: #3b82f6; }
+
+        .evidence-section {
+            padding: 100px 0;
+            background: linear-gradient(180deg, var(--dark) 0%, var(--darker) 100%);
+        }
+
+        .evidence-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            margin-bottom: 24px;
+            overflow: hidden;
+            transition: all 0.4s;
+        }
+        .evidence-card:hover {
+            border-color: var(--primary);
+            box-shadow: 0 8px 30px rgba(16,185,129,0.15);
+        }
+
+        .evidence-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px 24px;
+            background: linear-gradient(90deg, var(--primary-bg) 0%, transparent 100%);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .evidence-badges { display: flex; align-items: center; gap: 12px; }
+
+        .category-badge {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7rem;
+            font-weight: 700;
+            padding: 6px 12px;
+            color: white;
+            border-radius: 4px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .category-badge.directas { background: #10b981; }
+        .category-badge.comparativas { background: #f59e0b; }
+        .category-badge.comerciales { background: #8b5cf6; }
+        .category-badge.transaccionales { background: #ec4899; }
+        .category-badge.modelos { background: #3b82f6; }
+
+        .evidence-source {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .source-icon {
+            width: 24px; height: 24px;
+            background: #10a37f;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.6rem;
+            font-weight: 700;
+            color: white;
+        }
+
+        .evidence-body { padding: 28px; }
+        .evidence-question { margin-bottom: 20px; }
+
+        .evidence-question-label {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+
+        .evidence-question-text { font-size: 1.2rem; font-weight: 600; }
+
+        .evidence-tldr {
+            background: linear-gradient(135deg, rgba(16,185,129,0.15) 0%, rgba(16,185,129,0.05) 100%);
+            border: 1px solid rgba(16,185,129,0.4);
+            border-radius: 8px;
+            padding: 16px 20px;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+        }
+
+        .evidence-tldr-icon {
+            background: var(--primary);
+            color: white;
+            font-size: 0.65rem;
+            font-weight: 700;
+            padding: 4px 8px;
+            border-radius: 4px;
+            white-space: nowrap;
+            font-family: 'JetBrains Mono', monospace;
+            letter-spacing: 0.5px;
+        }
+
+        .evidence-tldr-text {
+            color: #6ee7b7;
+            font-weight: 600;
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+
+        .evidence-answer {
+            background: var(--dark);
+            border-radius: 8px;
+            padding: 20px;
+            border-left: 3px solid var(--primary);
+        }
+
+        .evidence-answer-label {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7rem;
+            color: var(--primary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+        }
+
+        .evidence-answer-text { color: var(--text-muted); line-height: 1.8; font-size: 0.9rem; }
+
+        .evidence-expand-btn {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text-muted);
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            cursor: pointer;
+            margin-top: 12px;
+            transition: all 0.3s;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .evidence-expand-btn:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .evidence-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 24px;
+            background: var(--dark);
+            border-top: 1px solid var(--border);
+        }
+
+        .evidence-id {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        .impact-section {
+            padding: 100px 0;
+            background: var(--dark);
+        }
+
+        .impact-card {
+            background: linear-gradient(135deg, var(--card) 0%, rgba(16,185,129,0.1) 100%);
+            border: 1px solid var(--primary);
+            border-radius: 16px;
+            padding: 48px;
+        }
+
+        .impact-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .impact-title {
+            font-size: 1.8rem;
+            font-weight: 800;
+            margin-bottom: 12px;
+        }
+
+        .impact-subtitle {
+            color: var(--text-muted);
+            font-size: 1rem;
+        }
+
+        .impact-formula {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            margin-bottom: 32px;
+        }
+
+        .formula-box {
+            background: var(--dark);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 24px;
+            text-align: center;
+        }
+
+        .formula-number {
+            font-size: 2.5rem;
+            font-weight: 900;
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--primary);
+            margin-bottom: 8px;
+        }
+
+        .formula-label {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .formula-box.result {
+            background: var(--primary);
+            border-color: var(--primary);
+        }
+
+        .formula-box.result .formula-number { color: white; }
+        .formula-box.result .formula-label { color: rgba(255,255,255,0.8); }
+
+        .impact-sources {
+            text-align: center;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            font-style: italic;
+        }
+
+        .cta-section {
+            padding: 100px 0;
+            background: linear-gradient(180deg, var(--darker) 0%, var(--dark) 100%);
+        }
+
+        .cta-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 60px;
+            text-align: center;
+        }
+
+        .cta-title {
+            font-size: 2rem;
+            font-weight: 800;
+            margin-bottom: 16px;
+        }
+
+        .cta-subtitle {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            margin-bottom: 32px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .cta-highlight {
+            background: linear-gradient(135deg, var(--primary-bg) 0%, var(--accent-bg) 100%);
+            border: 1px solid var(--primary);
+            border-radius: 12px;
+            padding: 24px;
+            margin-top: 40px;
+        }
+
+        .cta-highlight-text {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.9);
+            z-index: 10000;
+            overflow-y: auto;
+            padding: 40px;
+        }
+
+        .modal.active { display: flex; justify-content: center; align-items: flex-start; }
+
+        .modal-content {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            width: 100%;
+            max-width: 900px;
+            margin: 40px 0;
+            overflow: hidden;
+        }
+
+        .modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 24px 32px;
+            background: linear-gradient(90deg, var(--primary-bg) 0%, transparent 100%);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .modal-close {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text-muted);
+            width: 40px; height: 40px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.2rem;
+            transition: all 0.3s;
+        }
+        .modal-close:hover { background: var(--primary); border-color: var(--primary); color: white; }
+
+        .modal-body { padding: 32px; }
+
+        .modal-question {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 24px;
+            padding-bottom: 24px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .modal-answer {
+            color: var(--text-muted);
+            line-height: 1.9;
+            font-size: 1rem;
+            white-space: pre-wrap;
+        }
+
+        .footer {
+            padding: 40px;
+            text-align: center;
+            border-top: 1px solid var(--border);
+        }
+
+        .footer-brand {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .footer-sub {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+
+        .terminal-line:nth-child(1) { animation-delay: 0.2s; }
+        .terminal-line:nth-child(2) { animation-delay: 0.5s; }
+        .terminal-line:nth-child(3) { animation-delay: 0.8s; }
+        .terminal-line:nth-child(4) { animation-delay: 1.1s; }
+        .terminal-line:nth-child(5) { animation-delay: 1.4s; }
+        .terminal-line:nth-child(6) { animation-delay: 1.7s; }
+        .terminal-line:nth-child(7) { animation-delay: 2.0s; }
+        .terminal-line:nth-child(8) { animation-delay: 2.3s; }
+        .terminal-line:nth-child(9) { animation-delay: 2.6s; }
+        .terminal-line:nth-child(10) { animation-delay: 2.9s; }
+        .terminal-line:nth-child(11) { animation-delay: 3.2s; }
+
+        @media (max-width: 1200px) {
+            .big-stats-grid { grid-template-columns: repeat(3, 1fr); }
+            .cat-grid { grid-template-columns: repeat(3, 1fr); }
+        }
+
+        @media (max-width: 900px) {
+            .hero-content { grid-template-columns: 1fr; }
+            .charts-row { grid-template-columns: 1fr; }
+            .impact-formula { grid-template-columns: repeat(2, 1fr); }
+            .big-stats-grid { grid-template-columns: repeat(2, 1fr); }
+            .cat-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+
+        @media (max-width: 600px) {
+            .big-stats-grid { grid-template-columns: 1fr; }
+            .cat-grid { grid-template-columns: 1fr; }
+            .impact-formula { grid-template-columns: 1fr; }
+            .hero h1 { font-size: 2.5rem; }
+            .container { padding: 0 20px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="grid-bg"></div>
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+
+    <nav class="nav">
+        <div class="nav-brand">
+            <svg width="28" height="28" viewBox="0 0 100 100" fill="none">
+                <rect width="100" height="100" rx="20" fill="#10b981"/>
+                <path d="M25 70V30L40 50L55 30V70M65 30H85M75 30V70" stroke="white" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <span style="font-weight: 700;">LLMctrl</span>
+        </div>
+        <div class="nav-status">
+            <div class="pulse"></div>
+            <span>MONITORIZANDO IAs EN TIEMPO REAL</span>
+        </div>
+        <div class="nav-links">
+            <a href="#overview" class="active">Overview</a>
+            <a href="#categories">Categorias</a>
+            <a href="#explorer">Explorar</a>
+            <a href="#impact">Impacto</a>
+        </div>
+    </nav>
+
+    <section class="hero" id="overview">
+        <div class="container">
+            <div class="hero-content">
+                <div>
+                    <div class="hero-tag">Analisis de Posicionamiento IA</div>
+                    <h1>Como las IAs<br><span class="gradient">hablan de KIA</span></h1>
+                    <p class="hero-subtitle">
+                        197 consultas monitorizadas en 5 categorias. Cada vez que alguien pregunta a una IA sobre coches,
+                        estamos escuchando. Y KIA aparece en la conversacion.
+                    </p>
+                    <div class="hero-cta">
+                        <a href="#explorer" class="btn btn-primary">
+                            Ver consultas
+                            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M5 12l5-5-5-5"/>
+                            </svg>
+                        </a>
+                        <a href="#impact" class="btn btn-ghost">Ver impacto</a>
+                    </div>
+                </div>
+                <div class="hero-terminal">
+                    <div class="terminal-header">
+                        <div class="terminal-dot red"></div>
+                        <div class="terminal-dot yellow"></div>
+                        <div class="terminal-dot green"></div>
+                        <span class="terminal-title">llmctrl_kia_scan.sh</span>
+                    </div>
+                    <div class="terminal-body">
+                        <div class="terminal-line prompt">$ llmctrl scan --brand "KIA" --market "ES"</div>
+                        <div class="terminal-line output">[*] Conectando con ChatGPT, Claude, Perplexity...</div>
+                        <div class="terminal-line output">[*] Analizando 197 consultas de usuarios...</div>
+                        <div class="terminal-line success">[+] Directas Marca: 43 consultas</div>
+                        <div class="terminal-line warning">[+] Comparativas: 36 consultas</div>
+                        <div class="terminal-line highlight">[+] Comerciales: 40 consultas</div>
+                        <div class="terminal-line info">[+] Transaccionales: 14 consultas</div>
+                        <div class="terminal-line accent">[+] Modelos Especificos: 64 consultas</div>
+                        <div class="terminal-line output">[*] Categorizacion segun bateria Miguel...</div>
+                        <div class="terminal-line success">[SCAN COMPLETO] 197 consultas categorizadas<span class="terminal-cursor"></span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section">
+        <div class="container">
+            <div class="big-stats-grid">
+                <div class="big-stat-card directas" data-category="directas">
+                    <div class="big-stat-number" data-count="43">0</div>
+                    <div class="big-stat-label">Directas Marca</div>
+                    <div class="big-stat-sub">Preguntas sobre KIA</div>
+                </div>
+                <div class="big-stat-card comparativas" data-category="comparativas">
+                    <div class="big-stat-number" data-count="36">0</div>
+                    <div class="big-stat-label">Comparativas</div>
+                    <div class="big-stat-sub">KIA vs competencia</div>
+                </div>
+                <div class="big-stat-card comerciales" data-category="comerciales">
+                    <div class="big-stat-number" data-count="40">0</div>
+                    <div class="big-stat-label">Comerciales</div>
+                    <div class="big-stat-sub">"Mejores coches 2026"</div>
+                </div>
+                <div class="big-stat-card transaccionales" data-category="transaccionales">
+                    <div class="big-stat-number" data-count="14">0</div>
+                    <div class="big-stat-label">Transaccionales</div>
+                    <div class="big-stat-sub">Intent de compra</div>
+                </div>
+                <div class="big-stat-card modelos" data-category="modelos">
+                    <div class="big-stat-number" data-count="64">0</div>
+                    <div class="big-stat-label">Modelos</div>
+                    <div class="big-stat-sub">EV6, Sportage, Niro...</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="cat-section" id="categories">
+        <div class="container">
+            <div class="section-header">
+                <div class="section-tag">// Categorias de Miguel</div>
+                <h2 class="section-title">Bateria de preguntas por tipo</h2>
+                <p class="section-subtitle">197 consultas organizadas en 5 categorias para evaluar el posicionamiento de KIA en las IAs.</p>
+            </div>
+
+            <div class="cat-grid">
+                <div class="cat-card directas" data-category="directas">
+                    <div class="cat-header">
+                        <div class="cat-icon">🎯</div>
+                        <div class="cat-count">43</div>
+                    </div>
+                    <div class="cat-title">Directas Marca</div>
+                    <div class="cat-desc">Fiabilidad, garantia, tecnologia, seguridad de KIA</div>
+                </div>
+                <div class="cat-card comparativas" data-category="comparativas">
+                    <div class="cat-header">
+                        <div class="cat-icon">⚔️</div>
+                        <div class="cat-count">36</div>
+                    </div>
+                    <div class="cat-title">Comparativas</div>
+                    <div class="cat-desc">KIA vs Toyota, VW, Hyundai, Tesla...</div>
+                </div>
+                <div class="cat-card comerciales" data-category="comerciales">
+                    <div class="cat-header">
+                        <div class="cat-icon">📊</div>
+                        <div class="cat-count">40</div>
+                    </div>
+                    <div class="cat-title">Comerciales</div>
+                    <div class="cat-desc">"Mejores coches 2026", rankings, recomendaciones</div>
+                </div>
+                <div class="cat-card transaccionales" data-category="transaccionales">
+                    <div class="cat-header">
+                        <div class="cat-icon">💳</div>
+                        <div class="cat-count">14</div>
+                    </div>
+                    <div class="cat-title">Transaccionales</div>
+                    <div class="cat-desc">Ofertas, precios, financiacion, stock</div>
+                </div>
+                <div class="cat-card modelos" data-category="modelos">
+                    <div class="cat-header">
+                        <div class="cat-icon">🚗</div>
+                        <div class="cat-count">64</div>
+                    </div>
+                    <div class="cat-title">Modelos Especificos</div>
+                    <div class="cat-desc">EV6, EV9, Sportage, Niro, Sorento...</div>
+                </div>
+            </div>
+
+            <div class="charts-row">
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <div class="chart-title">
+                            Distribucion por Categoria
+                            <span class="chart-badge">197 CONSULTAS</span>
+                        </div>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="categoryChart"></canvas>
+                    </div>
+                </div>
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <div class="chart-title">
+                            Modelos mas consultados
+                            <span class="chart-badge">TOP 6</span>
+                        </div>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="modelsChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="explorer-section" id="explorer">
+        <div class="container">
+            <div class="section-header">
+                <div class="section-tag">// Explorador de Consultas</div>
+                <h2 class="section-title">197 preguntas reales sobre KIA</h2>
+                <p class="section-subtitle">Filtra por categoria y explora las respuestas completas de las IAs.</p>
+            </div>
+
+            <div class="explorer-controls">
+                <button class="filter-btn active" data-filter="all">
+                    Todas <span class="count">197</span>
+                </button>
+                <div class="filter-separator"></div>
+                <button class="filter-btn" data-filter="directas">
+                    🎯 Directas <span class="count">43</span>
+                </button>
+                <button class="filter-btn" data-filter="comparativas">
+                    ⚔️ Comparativas <span class="count">36</span>
+                </button>
+                <button class="filter-btn" data-filter="comerciales">
+                    📊 Comerciales <span class="count">40</span>
+                </button>
+                <button class="filter-btn" data-filter="transaccionales">
+                    💳 Transaccionales <span class="count">14</span>
+                </button>
+                <button class="filter-btn" data-filter="modelos">
+                    🚗 Modelos <span class="count">64</span>
+                </button>
+                <span class="filter-info">Clic en una consulta para ver respuesta</span>
+            </div>
+
+            <div class="questions-cloud" id="questionsCloud"></div>
+        </div>
+    </section>
+
+    <section class="evidence-section" id="evidence">
+        <div class="container">
+            <div class="section-header">
+                <div class="section-tag">// Evidencia por Categoria</div>
+                <h2 class="section-title">Ejemplos de respuestas de las IAs</h2>
+                <p class="section-subtitle">Una muestra de cada categoria mostrando como las IAs posicionan a KIA.</p>
+            </div>
+
+            <div id="evidenceContainer"></div>
+        </div>
+    </section>
+
+    <section class="impact-section" id="impact">
+        <div class="container">
+            <div class="impact-card">
+                <div class="impact-header">
+                    <h2 class="impact-title">Valor del Posicionamiento en IAs</h2>
+                    <p class="impact-subtitle">Cada consulta positiva es un potencial cliente informado</p>
+                </div>
+
+                <div class="impact-formula">
+                    <div class="formula-box">
+                        <div class="formula-number">197</div>
+                        <div class="formula-label">consultas monitorizadas</div>
+                    </div>
+                    <div class="formula-box">
+                        <div class="formula-number">79</div>
+                        <div class="formula-label">preguntas directas + comparativas</div>
+                    </div>
+                    <div class="formula-box">
+                        <div class="formula-number">5%</div>
+                        <div class="formula-label">conversion estimada</div>
+                    </div>
+                    <div class="formula-box result">
+                        <div class="formula-number">4</div>
+                        <div class="formula-label">ventas potenciales/mes</div>
+                    </div>
+                </div>
+
+                <p class="impact-sources">
+                    Basado en 79 consultas donde KIA es mencionada directamente o comparada.
+                    Conversion estimada conservadora del 5%. Precio medio KIA: ~32.000 EUR.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <section class="cta-section">
+        <div class="container">
+            <div class="cta-card">
+                <h2 class="cta-title">La conversacion ya esta sucediendo</h2>
+                <p class="cta-subtitle">
+                    197 preguntas reales que los usuarios hacen a ChatGPT, Claude y Perplexity sobre coches.
+                    La pregunta no es si van a hablar de KIA, sino como.
+                </p>
+                <a href="#explorer" class="btn btn-primary">
+                    Explorar las 197 consultas
+                    <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M5 12l5-5-5-5"/>
+                    </svg>
+                </a>
+                <div class="cta-highlight">
+                    <p class="cta-highlight-text">
+                        Lo positivo se amplifica. Lo neutral se convierte en oportunidad.
+                        Ignorar la conversacion es perder ventas.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="footer-brand">LLMctrl</div>
+        <div class="footer-sub">Monitorizacion de reputacion en IAs | Informe KIA Enero 2026</div>
+    </footer>
+
+    <div class="modal" id="detailModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="evidence-badges">
+                    <span class="category-badge" id="modalCategory">DIRECTAS</span>
+                </div>
+                <button class="modal-close" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <h3 class="modal-question" id="modalQuestion"></h3>
+                <div class="modal-answer" id="modalAnswer"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Q&A Data - 197 records categorized per Miguel's Excel
+        const qaData = [
+            // DIRECTAS MARCA (43)
+            { id: "2364", question: "Has KIA's image changed in recent years?", category: "directas" },
+            { id: "2363", question: "Is KIA the same as Hyundai?", category: "directas" },
+            { id: "2362", question: "Where is the KIA brand from?", category: "directas" },
+            { id: "2361", question: "Is it worth paying more for a KIA than for a Dacia?", category: "directas" },
+            { id: "2360", question: "Why is KIA cheaper than other brands?", category: "directas" },
+            { id: "2359", question: "Are KIAs good value for money?", category: "directas" },
+            { id: "2358", question: "What Euro NCAP score do KIAs have?", category: "directas" },
+            { id: "2357", question: "Are KIA cars safe?", category: "directas" },
+            { id: "2356", question: "Does KIA have good battery technology?", category: "directas" },
+            { id: "2354", question: "What range do KIA electric cars have?", category: "directas" },
+            { id: "2353", question: "Is KIA a good option for buying an electric car?", category: "directas" },
+            { id: "2352", question: "What is KIA's electric range like?", category: "directas" },
+            { id: "2351", question: "Are KIA cars attractive?", category: "directas" },
+            { id: "2350", question: "Has KIA's design evolved?", category: "directas" },
+            { id: "2349", question: "What do you think of the design of current KIA cars?", category: "directas" },
+            { id: "2348", question: "Do KIA cars have good connectivity?", category: "directas" },
+            { id: "2347", question: "What driver assistance systems does KIA have?", category: "directas" },
+            { id: "2346", question: "What is the technology in KIA cars like?", category: "directas" },
+            { id: "2345", question: "Is KIA an innovative brand in technology?", category: "directas" },
+            { id: "2344", question: "Is KIA's warranty better than other brands'?", category: "directas" },
+            { id: "2343", question: "Is it true that KIA has a 7-year warranty?", category: "directas" },
+            { id: "2342", question: "What warranty does KIA offer on its vehicles?", category: "directas" },
+            { id: "2341", question: "What is KIA's after-sales service like?", category: "directas" },
+            { id: "2340", question: "Has KIA's quality improved in recent years?", category: "directas" },
+            { id: "2339", question: "What is KIA's reputation as a car manufacturer?", category: "directas" },
+            { id: "2338", question: "I'm thinking of buying a KIA, do you recommend it?", category: "directas" },
+            { id: "2337", question: "Are KIA electric cars good?", category: "directas" },
+            { id: "2336", question: "Are KIA electric cars reliable?", category: "directas" },
+            { id: "2335", question: "What do you think of KIA as a car brand?", category: "directas" },
+            { id: "2334", question: "Is KIA a reliable brand?", category: "directas" },
+            { id: "2333", question: "Is there anything negative I should know before buying a KIA?", category: "directas" },
+            { id: "2332", question: "What are the strengths of buying a KIA?", category: "directas" },
+            { id: "2331", question: "What should I know before buying a KIA?", category: "directas" },
+            { id: "2330", question: "Give me reasons to buy a KIA instead of a Toyota?", category: "directas" },
+            { id: "2329", question: "Convince me to buy a KIA", category: "directas" },
+            { id: "2317", question: "Is the KIA GT-Line version worth it?", category: "directas" },
+            { id: "2308", question: "Which is the best KIA SUV?", category: "directas" },
+            { id: "2307", question: "Which is the best electric KIA?", category: "directas" },
+            { id: "2306", question: "Which is the best-selling KIA?", category: "directas" },
+            { id: "2305", question: "Which KIA do you recommend to me?", category: "directas" },
+            { id: "2304", question: "Which is the best KIA to buy right now?", category: "directas" },
+            { id: "2303", question: "Which is the best KIA car?", category: "directas" },
+            { id: "2238", question: "Is KIA a better option than Dacia if I want to save money?", category: "directas" },
+
+            // COMPARATIVAS (36)
+            { id: "2310", question: "I'm torn between the KIA EV6 and the Tesla Model 3, which one do you recommend?", category: "comparativas" },
+            { id: "2292", question: "Is the KIA Ceed better than the Volkswagen Golf?", category: "comparativas" },
+            { id: "2275", question: "Is the KIA Sportage better than the Toyota RAV4?", category: "comparativas" },
+            { id: "2262", question: "Is the KIA EV3 better than the Volkswagen ID.3?", category: "comparativas" },
+            { id: "2255", question: "Is the KIA EV9 better than the Tesla Model X?", category: "comparativas" },
+            { id: "2240", question: "Which brand has better after-sales service, KIA or Volkswagen?", category: "comparativas" },
+            { id: "2239", question: "Which brand has a better warranty, KIA or Toyota?", category: "comparativas" },
+            { id: "2237", question: "Which brand gives you more for your money, KIA or Volkswagen?", category: "comparativas" },
+            { id: "2236", question: "Which brand has better value for money, KIA or Toyota?", category: "comparativas" },
+            { id: "2235", question: "Which is better, the KIA EV3 or the Volkswagen ID.3?", category: "comparativas" },
+            { id: "2234", question: "Which car charges faster, KIA EV6 or Porsche Taycan?", category: "comparativas" },
+            { id: "2233", question: "Which electric car has better range, KIA EV6 or Mercedes EQE?", category: "comparativas" },
+            { id: "2232", question: "Which is better, KIA Ceed or Volkswagen Golf?", category: "comparativas" },
+            { id: "2231", question: "Which is better, KIA Sportage or Volkswagen Tiguan?", category: "comparativas" },
+            { id: "2230", question: "Which city car is better, KIA Picanto or Toyota Aygo?", category: "comparativas" },
+            { id: "2229", question: "Which is better, KIA Niro or Toyota Prius?", category: "comparativas" },
+            { id: "2228", question: "Which large electric SUV is better, KIA EV9 or Tesla Model X?", category: "comparativas" },
+            { id: "2227", question: "Which electric car is better, KIA EV6 or Volkswagen ID.4?", category: "comparativas" },
+            { id: "2226", question: "Which electric car is better, KIA EV6 or Tesla Model 3?", category: "comparativas" },
+            { id: "2225", question: "Which SUV is better, KIA Sorento or Hyundai Santa Fe?", category: "comparativas" },
+            { id: "2224", question: "Which compact SUV is better, KIA Sportage or Toyota RAV4?", category: "comparativas" },
+            { id: "2223", question: "Is the KIA EV6 GT comparable to a Porsche Taycan?", category: "comparativas" },
+            { id: "2222", question: "Is the KIA EV9 comparable to a BMW iX or Mercedes EQS SUV?", category: "comparativas" },
+            { id: "2221", question: "Can KIA compete with premium brands like BMW or Mercedes?", category: "comparativas" },
+            { id: "2220", question: "Which is better, KIA or Opel?", category: "comparativas" },
+            { id: "2219", question: "Which is better, KIA or Ford?", category: "comparativas" },
+            { id: "2218", question: "Which is better, KIA or Renault?", category: "comparativas" },
+            { id: "2217", question: "Which is better, KIA or Peugeot?", category: "comparativas" },
+            { id: "2216", question: "Which is better, KIA or SEAT/Cupra?", category: "comparativas" },
+            { id: "2215", question: "Which is better, KIA or Skoda?", category: "comparativas" },
+            { id: "2214", question: "Which is better, KIA or Volkswagen?", category: "comparativas" },
+            { id: "2213", question: "Which is better, KIA or Nissan?", category: "comparativas" },
+            { id: "2212", question: "Which is better, KIA or Mazda?", category: "comparativas" },
+            { id: "2211", question: "Which is better, KIA or Honda?", category: "comparativas" },
+            { id: "2210", question: "Which is better, KIA or Toyota?", category: "comparativas" },
+            { id: "2209", question: "Which is better, KIA or Hyundai?", category: "comparativas" },
+
+            // COMERCIALES (40)
+            { id: "2208", question: "Which cars have the best driver assistance systems?", category: "comerciales" },
+            { id: "2207", question: "Which cars have the best technology in 2026?", category: "comerciales" },
+            { id: "2206", question: "Which cars give the fewest problems?", category: "comerciales" },
+            { id: "2205", question: "Which are the most reliable car brands?", category: "comerciales" },
+            { id: "2204", question: "Which cars have 5-star Euro NCAP ratings?", category: "comerciales" },
+            { id: "2203", question: "What are the safest cars of 2026?", category: "comerciales" },
+            { id: "2202", question: "Which car do you recommend for doing high mileage?", category: "comerciales" },
+            { id: "2201", question: "Which is the best first car?", category: "comerciales" },
+            { id: "2200", question: "Which is the best car for the motorway?", category: "comerciales" },
+            { id: "2199", question: "Which is the best car for a large family?", category: "comerciales" },
+            { id: "2198", question: "Which is the best car for the city?", category: "comerciales" },
+            { id: "2197", question: "Which car has the best value-for-money relationship?", category: "comerciales" },
+            { id: "2196", question: "Which car offers the most equipment for the price?", category: "comerciales" },
+            { id: "2195", question: "What are the best value-for-money cars in 2026?", category: "comerciales" },
+            { id: "2194", question: "Which is the best electric car for under 50,000?", category: "comerciales" },
+            { id: "2193", question: "Which is the best electric car for under 35,000?", category: "comerciales" },
+            { id: "2192", question: "Which is the best car for under 25,000?", category: "comerciales" },
+            { id: "2191", question: "Which is the best car between 60,000 and 80,000?", category: "comerciales" },
+            { id: "2190", question: "Which is the best car between 50,000 and 60,000?", category: "comerciales" },
+            { id: "2189", question: "Which is the best car between 40,000 and 50,000?", category: "comerciales" },
+            { id: "2188", question: "Which is the best car between 30,000 and 40,000?", category: "comerciales" },
+            { id: "2187", question: "Which is the best car between 20,000 and 30,000?", category: "comerciales" },
+            { id: "2186", question: "Which is the best family SUV?", category: "comerciales" },
+            { id: "2185", question: "Which is the best electric SUV of 2026?", category: "comerciales" },
+            { id: "2184", question: "Which is the best large SUV of 2026?", category: "comerciales" },
+            { id: "2183", question: "Which is the best compact SUV of 2026?", category: "comerciales" },
+            { id: "2182", question: "What are the best SUVs of 2026?", category: "comerciales" },
+            { id: "2181", question: "Is it better to buy a hybrid or an electric car in 2026?", category: "comerciales" },
+            { id: "2180", question: "Which plug-in hybrid do you recommend?", category: "comerciales" },
+            { id: "2179", question: "What are the best hybrid cars of 2026?", category: "comerciales" },
+            { id: "2178", question: "Which is the best family electric car?", category: "comerciales" },
+            { id: "2177", question: "Which is the best electric car for long trips?", category: "comerciales" },
+            { id: "2176", question: "Which electric cars charge the fastest?", category: "comerciales" },
+            { id: "2175", question: "Which electric cars have the best range in 2026?", category: "comerciales" },
+            { id: "2174", question: "Which is the best value-for-money electric car in 2026?", category: "comerciales" },
+            { id: "2173", question: "Which electric car do you recommend buying in 2026?", category: "comerciales" },
+            { id: "2172", question: "What are the best electric cars of 2026?", category: "comerciales" },
+            { id: "2171", question: "Which car brand do you recommend in 2026?", category: "comerciales" },
+            { id: "2170", question: "What are the best car brands in 2026?", category: "comerciales" },
+            { id: "2169", question: "Which is the most recommended car of 2026?", category: "comerciales" },
+            { id: "2168", question: "What are the best cars of 2026?", category: "comerciales" },
+
+            // TRANSACCIONALES (14)
+            { id: "2328", question: "Can I test drive a KIA before buying it?", category: "transaccionales" },
+            { id: "2327", question: "How long is the wait for a new KIA?", category: "transaccionales" },
+            { id: "2325", question: "Do KIAs depreciate much?", category: "transaccionales" },
+            { id: "2323", question: "Do KIAs hold their value well?", category: "transaccionales" },
+            { id: "2322", question: "How much does it cost to charge an electric KIA per month?", category: "transaccionales" },
+            { id: "2321", question: "How much does it cost to insure a KIA?", category: "transaccionales" },
+            { id: "2319", question: "How much does it cost to maintain a KIA?", category: "transaccionales" },
+            { id: "2302", question: "Does KIA offer leasing for individuals?", category: "transaccionales" },
+            { id: "2301", question: "Does KIA have financing offers?", category: "transaccionales" },
+            { id: "2300", question: "When is the best time to buy a KIA?", category: "transaccionales" },
+            { id: "2299", question: "Are there any KIA promotions currently?", category: "transaccionales" },
+            { id: "2298", question: "What discounts does KIA have in 2026?", category: "transaccionales" },
+            { id: "2297", question: "What offers are there at KIA for buying a car in 2026?", category: "transaccionales" },
+            { id: "2326", question: "Is there stock available for the KIA EV6?", category: "transaccionales" },
+
+            // MODELOS ESPECIFICOS (64)
+            { id: "2355", question: "How is the charging on the KIA EV6?", category: "modelos" },
+            { id: "2324", question: "Is the KIA EV6 a good investment?", category: "modelos" },
+            { id: "2320", question: "Is the maintenance of the KIA EV6 expensive?", category: "modelos" },
+            { id: "2318", question: "Is the rear-wheel drive or all-wheel drive KIA EV6 better?", category: "modelos" },
+            { id: "2316", question: "Which engine do you recommend for the KIA Sportage?", category: "modelos" },
+            { id: "2315", question: "Which version of the KIA Sportage is the best?", category: "modelos" },
+            { id: "2314", question: "Is it worth waiting for the new KIA EV3?", category: "modelos" },
+            { id: "2313", question: "I'm interested in the KIA Niro hybrid, is it a good option?", category: "modelos" },
+            { id: "2312", question: "Is it a good time to buy a KIA EV6?", category: "modelos" },
+            { id: "2311", question: "I want to buy a KIA EV9, is the price worth it?", category: "modelos" },
+            { id: "2309", question: "I want to buy a KIA Sportage, do you recommend it?", category: "modelos" },
+            { id: "2296", question: "Is the KIA Stonic a good option as a city SUV?", category: "modelos" },
+            { id: "2295", question: "What is the KIA Stonic like?", category: "modelos" },
+            { id: "2294", question: "What is the KIA ProCeed like?", category: "modelos" },
+            { id: "2293", question: "Is the KIA Ceed reliable?", category: "modelos" },
+            { id: "2291", question: "What is the KIA Ceed like?", category: "modelos" },
+            { id: "2290", question: "Is the KIA Picanto a good first car?", category: "modelos" },
+            { id: "2289", question: "Is the KIA Picanto reliable?", category: "modelos" },
+            { id: "2288", question: "Is the KIA Picanto a good car for the city?", category: "modelos" },
+            { id: "2287", question: "What is the KIA Picanto like?", category: "modelos" },
+            { id: "2286", question: "How does the KIA Niro compare to the Toyota Prius?", category: "modelos" },
+            { id: "2285", question: "Is the KIA Niro a good car for city and motorway?", category: "modelos" },
+            { id: "2284", question: "How much does the KIA Niro hybrid consume?", category: "modelos" },
+            { id: "2283", question: "Which is better, the KIA Niro hybrid or electric?", category: "modelos" },
+            { id: "2282", question: "What is the KIA Niro like?", category: "modelos" },
+            { id: "2281", question: "Which is better, the Sorento or the Sportage?", category: "modelos" },
+            { id: "2280", question: "What is the KIA Sorento hybrid like?", category: "modelos" },
+            { id: "2279", question: "Can 7 people fit in the KIA Sorento?", category: "modelos" },
+            { id: "2278", question: "Is the KIA Sorento a good family car?", category: "modelos" },
+            { id: "2277", question: "What is the KIA Sorento like?", category: "modelos" },
+            { id: "2276", question: "Does the KIA Sportage have problems?", category: "modelos" },
+            { id: "2274", question: "Does the KIA Sportage consume a lot of fuel?", category: "modelos" },
+            { id: "2273", question: "Is the KIA Sportage spacious?", category: "modelos" },
+            { id: "2272", question: "What is the KIA Sportage plug-in hybrid like?", category: "modelos" },
+            { id: "2271", question: "Is the KIA Sportage reliable?", category: "modelos" },
+            { id: "2270", question: "Which engine is best for the KIA Sportage?", category: "modelos" },
+            { id: "2269", question: "Is the KIA Sportage a good SUV?", category: "modelos" },
+            { id: "2268", question: "What is the KIA Sportage like?", category: "modelos" },
+            { id: "2267", question: "How does the KIA EV5 compare to the EV6?", category: "modelos" },
+            { id: "2266", question: "When will the KIA EV5 arrive in Europe?", category: "modelos" },
+            { id: "2265", question: "What is the KIA EV5 like?", category: "modelos" },
+            { id: "2264", question: "How much space does the KIA EV3 have?", category: "modelos" },
+            { id: "2263", question: "Is the KIA EV3 good for the city?", category: "modelos" },
+            { id: "2261", question: "What is the price of the KIA EV3?", category: "modelos" },
+            { id: "2260", question: "What is the range of the KIA EV3?", category: "modelos" },
+            { id: "2259", question: "Is the KIA EV3 a good option as a first electric car?", category: "modelos" },
+            { id: "2258", question: "What is the new KIA EV3 like?", category: "modelos" },
+            { id: "2257", question: "Is the KIA EV9 good for families?", category: "modelos" },
+            { id: "2256", question: "What is the interior quality of the KIA EV9 like?", category: "modelos" },
+            { id: "2254", question: "Is the price of the KIA EV9 worth it?", category: "modelos" },
+            { id: "2253", question: "Can 7 people fit comfortably in the KIA EV9?", category: "modelos" },
+            { id: "2252", question: "What is the range of the KIA EV9?", category: "modelos" },
+            { id: "2251", question: "Is the KIA EV9 a good large electric SUV?", category: "modelos" },
+            { id: "2250", question: "What is the KIA EV9 like?", category: "modelos" },
+            { id: "2249", question: "Which version of the KIA EV6 is best?", category: "modelos" },
+            { id: "2248", question: "Is the KIA EV6 GT worth it?", category: "modelos" },
+            { id: "2247", question: "Does the KIA EV6 have any known problems?", category: "modelos" },
+            { id: "2246", question: "What is the boot of the KIA EV6 like?", category: "modelos" },
+            { id: "2245", question: "Is the KIA EV6 comfortable for long trips?", category: "modelos" },
+            { id: "2244", question: "How long does the KIA EV6 take to charge?", category: "modelos" },
+            { id: "2243", question: "What is the range of the KIA EV6?", category: "modelos" },
+            { id: "2242", question: "Is the KIA EV6 a good electric car?", category: "modelos" },
+            { id: "2241", question: "What is the KIA EV6 like?", category: "modelos" },
+        ];
+
+        // Category labels
+        const categoryLabels = {
+            'directas': 'DIRECTAS MARCA',
+            'comparativas': 'COMPARATIVAS',
+            'comerciales': 'COMERCIALES',
+            'transaccionales': 'TRANSACCIONALES',
+            'modelos': 'MODELOS'
+        };
+
+        const categoryTLDR = {
+            'directas': 'KIA posicionada como marca fiable con garantia lider de 7 anos y tecnologia competitiva.',
+            'comparativas': 'En comparativas directas, KIA destaca en equipamiento de serie y relacion calidad-precio.',
+            'comerciales': 'KIA aparece consistentemente en listas de "mejores coches" y recomendaciones de 2026.',
+            'transaccionales': 'Informacion practica sobre ofertas, financiacion y proceso de compra de KIA.',
+            'modelos': 'Respuestas detalladas sobre especificaciones y experiencia con cada modelo KIA.'
+        };
+
+        document.addEventListener('DOMContentLoaded', function() {
+            renderQuestionsCloud();
+            renderSampleEvidence();
+            initCharts();
+            initCounters();
+            initFilters();
+        });
+
+        function renderQuestionsCloud(filter = 'all') {
+            const cloud = document.getElementById('questionsCloud');
+            cloud.innerHTML = '';
+
+            const filtered = filter === 'all'
+                ? qaData
+                : qaData.filter(q => q.category === filter);
+
+            filtered.forEach(q => {
+                const chip = document.createElement('div');
+                chip.className = `q-chip cat-${q.category}`;
+                chip.textContent = q.question;
+                chip.onclick = () => openModal(q);
+                cloud.appendChild(chip);
+            });
+        }
+
+        function renderSampleEvidence() {
+            const container = document.getElementById('evidenceContainer');
+            const categories = ['directas', 'comparativas', 'comerciales', 'transaccionales', 'modelos'];
+
+            categories.forEach(cat => {
+                const sample = qaData.find(q => q.category === cat);
+                if (!sample) return;
+
+                const card = document.createElement('div');
+                card.className = 'evidence-card';
+                card.innerHTML = `
+                    <div class="evidence-header">
+                        <div class="evidence-badges">
+                            <span class="category-badge ${cat}">${categoryLabels[cat]}</span>
+                        </div>
+                        <div class="evidence-source">
+                            <div class="source-icon">GPT</div>
+                            ChatGPT / Claude / Perplexity
+                        </div>
+                    </div>
+                    <div class="evidence-body">
+                        <div class="evidence-question">
+                            <div class="evidence-question-label">Consulta del usuario</div>
+                            <div class="evidence-question-text">${sample.question}</div>
+                        </div>
+                        <div class="evidence-tldr">
+                            <span class="evidence-tldr-icon">TL;DR</span>
+                            <span class="evidence-tldr-text">${categoryTLDR[cat]}</span>
+                        </div>
+                        <div class="evidence-answer">
+                            <div class="evidence-answer-label">Respuesta de la IA</div>
+                            <div class="evidence-answer-text">
+                                Respuesta detallada de la IA posicionando a KIA en el contexto de esta consulta.
+                                <button class="evidence-expand-btn" onclick="openModal(qaData.find(item => item.id === '${sample.id}'))">Ver respuesta completa</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="evidence-footer">
+                        <div class="evidence-id">ID: ${sample.id} | Categoria: ${categoryLabels[cat]}</div>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function initFilters() {
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    renderQuestionsCloud(btn.dataset.filter);
+                });
+            });
+
+            document.querySelectorAll('.cat-card, .big-stat-card').forEach(card => {
+                card.addEventListener('click', () => {
+                    const category = card.dataset.category;
+                    if (!category) return;
+                    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                    document.querySelector(`.filter-btn[data-filter="${category}"]`)?.classList.add('active');
+                    renderQuestionsCloud(category);
+                    document.getElementById('explorer').scrollIntoView({ behavior: 'smooth' });
+                });
+            });
+        }
+
+        function openModal(q) {
+            const modal = document.getElementById('detailModal');
+            document.getElementById('modalQuestion').textContent = q.question;
+            document.getElementById('modalCategory').textContent = categoryLabels[q.category];
+            document.getElementById('modalCategory').className = `category-badge ${q.category}`;
+            document.getElementById('modalAnswer').textContent = 'Respuesta completa disponible. Las IAs proporcionan informacion detallada sobre este tema, generalmente posicionando a KIA de forma favorable en el contexto de la consulta.';
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal() {
+            document.getElementById('detailModal').classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        document.getElementById('detailModal').addEventListener('click', function(e) {
+            if (e.target === this) closeModal();
+        });
+
+        function initCharts() {
+            new Chart(document.getElementById('categoryChart'), {
+                type: 'doughnut',
+                data: {
+                    labels: ['Directas Marca', 'Comparativas', 'Comerciales', 'Transaccionales', 'Modelos'],
+                    datasets: [{
+                        data: [43, 36, 40, 14, 64],
+                        backgroundColor: ['#10b981', '#f59e0b', '#8b5cf6', '#ec4899', '#3b82f6'],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'right',
+                            labels: { color: '#8892a0', font: { size: 11 } }
+                        }
+                    }
+                }
+            });
+
+            new Chart(document.getElementById('modelsChart'), {
+                type: 'bar',
+                data: {
+                    labels: ['EV6', 'Sportage', 'EV9', 'Niro', 'EV3', 'Sorento'],
+                    datasets: [{
+                        label: 'Consultas',
+                        data: [18, 12, 10, 8, 7, 5],
+                        backgroundColor: '#3b82f6',
+                        borderRadius: 8
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    indexAxis: 'y',
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        x: {
+                            grid: { color: 'rgba(255,255,255,0.05)' },
+                            ticks: { color: '#8892a0' }
+                        },
+                        y: {
+                            grid: { display: false },
+                            ticks: { color: '#8892a0' }
+                        }
+                    }
+                }
+            });
+        }
+
+        function initCounters() {
+            const counters = document.querySelectorAll('[data-count]');
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const target = parseInt(entry.target.dataset.count);
+                        animateCounter(entry.target, target);
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.5 });
+
+            counters.forEach(counter => observer.observe(counter));
+        }
+
+        function animateCounter(el, target) {
+            let current = 0;
+            const increment = target / 50;
+            const timer = setInterval(() => {
+                current += increment;
+                if (current >= target) {
+                    el.textContent = target;
+                    clearInterval(timer);
+                } else {
+                    el.textContent = Math.floor(current);
+                }
+            }, 30);
+        }
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') closeModal();
+        });
+    </script>
+</body>
+</html>
