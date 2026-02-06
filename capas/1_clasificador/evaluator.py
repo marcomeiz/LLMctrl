@@ -24,6 +24,8 @@ DEFAULT_MODEL = "google/gemini-2.0-flash-lite-001"
 def classify_sentiment(
     answer: str,
     brand: str,
+    question: str = "",
+    mention: bool = True,
     model: str = DEFAULT_MODEL,
     api_key: Optional[str] = None
 ) -> Dict:
@@ -33,6 +35,8 @@ def classify_sentiment(
     Args:
         answer: The answer text to analyze
         brand: The brand name to evaluate sentiment for
+        question: The original question (for context)
+        mention: Whether the brand is mentioned in the answer
         model: OpenRouter model to use
         api_key: OpenRouter API key (uses env var if not provided)
 
@@ -46,21 +50,37 @@ def classify_sentiment(
     # First, detect language from the first 200 chars of answer
     answer_sample = answer[:200] if len(answer) > 200 else answer
 
+    # Build context about brand mention
+    mention_context = ""
+    if not mention:
+        mention_context = f"""
+IMPORTANT CONTEXT: The brand "{brand}" is NOT mentioned in this answer.
+You must consider the QUESTION CONTEXT to determine if this is good or bad:
+- If the question asks about problems/issues/what to avoid → NOT being mentioned is POSITIVE (OPPORTUNITY)
+- If the question directly asks about {brand} → NOT being mentioned is NEGATIVE (CRITICAL)
+- If the question is a general comparison → NOT being mentioned may be neutral (WARNING) or negative (CRITICAL)
+"""
+
     prompt = f"""STEP 1 - LANGUAGE DETECTION (CRITICAL):
 First, identify the language of this text sample: "{answer_sample}"
 You MUST write ALL your responses in THIS SAME LANGUAGE.
 
-STEP 2 - Analyze the following answer about the brand "{brand}" and classify it.
+STEP 2 - Analyze the following Q&A about the brand "{brand}" and classify it.
 
-CLASSIFICATION RULES:
-- OPPORTUNITY: The answer is favorable/positive for {brand}. Recommends it, highlights benefits, or presents it well.
-- WARNING: The answer is neutral or mixed. Contains both positives and negatives, or is purely informational without clear stance.
-- CRITICAL: The answer is unfavorable/negative for {brand}. Criticizes it, highlights problems, or recommends alternatives instead.
+QUESTION:
+{question}
 
-IMPORTANT: Evaluate the OVERALL sentiment of the COMPLETE answer, not just parts of it.
-
-ANSWER TO ANALYZE:
+ANSWER:
 {answer}
+{mention_context}
+CLASSIFICATION RULES:
+- OPPORTUNITY: The answer is favorable/positive for {brand}. Recommends it, highlights benefits, presents it well, OR if the question is negative (avoid/problems) and {brand} is NOT mentioned (implicitly positive).
+- WARNING: The answer is neutral or mixed. Contains both positives and negatives, or is purely informational without clear stance.
+- CRITICAL: The answer is unfavorable/negative for {brand}. Criticizes it, highlights problems, recommends alternatives instead, OR if the question directly asks about {brand} and it's not mentioned.
+
+IMPORTANT:
+- Evaluate the OVERALL sentiment considering BOTH question context AND answer content.
+- Consider what NOT being mentioned implies based on the question type.
 
 Respond in JSON format. ALL TEXT FIELDS MUST BE IN THE SAME LANGUAGE AS THE ANSWER ABOVE:
 {{
@@ -177,6 +197,7 @@ def evaluate(
 
     evaluated_data = []
     stats = {'CRITICAL': 0, 'WARNING': 0, 'OPPORTUNITY': 0}
+    no_mention_count = 0
     no_mention_critical = 0
 
     print(f"Evaluating {len(data)} answers...")
@@ -186,23 +207,23 @@ def evaluate(
 
     for i, record in enumerate(data):
         answer = record.get('answer', '')
+        question = record.get('question_text', '')
         mention = record.get('mention', False)
 
-        # Rule: If brand not mentioned, always CRITICAL
+        # Always use LLM to classify - it considers question context
+        # to determine if "no mention" is good or bad
+        result = classify_sentiment(answer, brand, question, mention, model, api_key)
+        classification = result['classification']
+        reason = result['reason']
+        triggers = result['triggers_detected']
+        psychological_impact = result['psychological_impact']
+
         if not mention:
-            classification = 'CRITICAL'
-            reason = 'Marca no mencionada en la respuesta'
-            triggers = [{"trigger": "brand not mentioned", "type": "CRITICAL", "context": "N/A", "reason": "La marca no aparece en la respuesta"}]
-            psychological_impact = f"El usuario buscaba información sobre {brand} pero la respuesta no menciona la marca. Esto genera frustración y pérdida de confianza en la fuente. El sesgo de disponibilidad hace que el usuario recuerde mejor las alternativas mencionadas. Impacto negativo directo: el usuario probablemente buscará en otra fuente o considerará los competidores listados."
-            no_mention_critical += 1
-        else:
-            # Use LLM to classify
-            result = classify_sentiment(answer, brand, model, api_key)
-            classification = result['classification']
-            reason = result['reason']
-            triggers = result['triggers_detected']
-            psychological_impact = result['psychological_impact']
-            time.sleep(delay)  # Rate limiting
+            no_mention_count += 1
+            if classification == 'CRITICAL':
+                no_mention_critical += 1
+
+        time.sleep(delay)  # Rate limiting
 
         stats[classification] += 1
 
@@ -231,7 +252,9 @@ def evaluate(
     print(f"  CRITICAL:    {stats['CRITICAL']:3d} ({stats['CRITICAL']/total*100:5.1f}%) {'🔴' * (stats['CRITICAL'] // 10)}")
     print(f"  WARNING:     {stats['WARNING']:3d} ({stats['WARNING']/total*100:5.1f}%) {'🟡' * (stats['WARNING'] // 10)}")
     print(f"  OPPORTUNITY: {stats['OPPORTUNITY']:3d} ({stats['OPPORTUNITY']/total*100:5.1f}%) {'🟢' * (stats['OPPORTUNITY'] // 10)}")
-    print(f"\n  (No mention → CRITICAL: {no_mention_critical})")
+    print(f"\n  No mention total: {no_mention_count}")
+    print(f"    → CRITICAL: {no_mention_critical}")
+    print(f"    → Other (context-aware): {no_mention_count - no_mention_critical}")
 
     # Save output
     with open(output_path, 'w', encoding='utf-8') as f:

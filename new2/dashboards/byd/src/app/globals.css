@@ -1,0 +1,72 @@
+@import "tailwindcss";
+
+:root {
+  /* Version A - Minimalista Light */
+  --background: #FAFAFA;
+  --surface: #FFFFFF;
+  --border: #E5E5E5;
+  --text: #0A0A0A;
+  --text-muted: #717171;
+  --critical: #DC2626;
+  --critical-bg: #FEF2F2;
+  --warning: #D97706;
+  --warning-bg: #FFFBEB;
+  --opportunity: #059669;
+  --opportunity-bg: #ECFDF5;
+}
+
+.dark {
+  /* Version A - Minimalista Dark */
+  --background: #0A0A0A;
+  --surface: #141414;
+  --border: #262626;
+  --text: #FAFAFA;
+  --text-muted: #A1A1A1;
+  --critical: #EF4444;
+  --critical-bg: #1F1515;
+  --warning: #F59E0B;
+  --warning-bg: #1F1A15;
+  --opportunity: #22C55E;
+  --opportunity-bg: #151F1A;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-surface: var(--surface);
+  --color-border: var(--border);
+  --color-text: var(--text);
+  --color-text-muted: var(--text-muted);
+  --color-critical: var(--critical);
+  --color-critical-bg: var(--critical-bg);
+  --color-warning: var(--warning);
+  --color-warning-bg: var(--warning-bg);
+  --color-opportunity: var(--opportunity);
+  --color-opportunity-bg: var(--opportunity-bg);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+body {
+  background: var(--background);
+  color: var(--text);
+  font-family: var(--font-sans), system-ui, sans-serif;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--surface);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-muted);
+}

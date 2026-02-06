@@ -143,12 +143,27 @@ Final JSON with all enrichment fields:
 
 ## Classification Logic
 
+The evaluator uses LLM-based analysis considering **both question context and answer content**.
+
+### Context-Aware Classification
+
+| Question Type | Brand Mentioned | Result |
+|---------------|-----------------|--------|
+| Direct ("Is X good?") | Yes | LLM evaluates sentiment |
+| Direct ("Is X good?") | No | CRITICAL 🔴 (brand ignored) |
+| Negative ("What to avoid?") | No | OPPORTUNITY 🟢 (not on "bad" list) |
+| Negative ("What to avoid?") | Yes | Depends on how mentioned |
+| Comparative | Varies | LLM considers positioning |
+
+### Sentiment Rules
+
 | Condition | Result | Description |
 |-----------|--------|-------------|
-| `mention = false` | CRITICAL 🔴 | Brand not mentioned (auto) |
 | Positive answer | OPPORTUNITY 🟢 | Favorable for brand |
 | Neutral/mixed | WARNING 🟡 | Neither positive nor negative |
 | Negative answer | CRITICAL 🔴 | Unfavorable for brand |
+
+**Key improvement**: "Brand not mentioned" is no longer auto-CRITICAL. The LLM considers whether not being mentioned is positive (e.g., "avoid" questions) or negative (direct brand questions).
 
 ## Evaluator Model
 
@@ -191,7 +206,7 @@ Sources detected via regex: domain names, source names on own lines, URLs
 ### evaluator.py
 
 - `evaluate(input_path, output_path, brand, model, api_key)` - Main evaluation
-- `classify_sentiment(answer, brand, model, api_key)` - Single answer
+- `classify_sentiment(answer, brand, question, mention, model, api_key)` - Single answer (context-aware)
 
 ## Tested With
 

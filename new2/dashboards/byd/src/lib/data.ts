@@ -1,9 +1,9 @@
 /**
- * Data module for Betfair ES Dashboard
+ * Data module for BYD UK Dashboard
  * Adapted for new JSON format with psychological_impact inline
  */
 
-import rawData from '../data/spain/betfair_es_evaluated.json';
+import rawData from '../data/uk/byd_uk_evaluated.json';
 
 export type Classification = 'CRITICAL' | 'WARNING' | 'OPPORTUNITY';
 
@@ -19,7 +19,6 @@ export interface TriggerDetail {
 export interface Record {
   id: string;
   question_text: string;
-  question_text_en: string;  // English translation of the question
   answer: string;
   answer_preview: string;
   category: CategoryId;
@@ -33,17 +32,16 @@ export interface Record {
   classification: Classification;
   classification_reason: string;
   psychological_impact: string;
-  psychological_impact_en: string;  // English translation of the analysis
 }
 
-// Category names in Spanish
+// Category names in English (UK)
 export const CATEGORY_NAMES: { [key in CategoryId]: string } = {
-  1: 'Marca',
-  2: 'Comparación General',
-  3: 'Por Competidor',
-  4: 'Comercial',
-  5: 'Transaccionales',
-  6: 'Transaccionales',
+  1: 'Brand Questions',
+  2: 'Brand Questions',
+  3: 'Comparative - General',
+  4: 'Comparative - By Competitor',
+  5: 'Commercial Questions',
+  6: 'Transactional Questions',
 };
 
 export const CLASSIFICATION_COLORS: { [key in Classification]: { text: string; bg: string; dot: string } } = {
@@ -69,7 +67,6 @@ function normalizeRecords(data: unknown[]): Record[] {
   return (data as Array<{
     id: number | string;
     question_text: string;
-    question_text_en?: string;
     answer: string;
     category: number;
     category_name: string;
@@ -81,11 +78,9 @@ function normalizeRecords(data: unknown[]): Record[] {
     classification: Classification;
     classification_reason: string;
     psychological_impact?: string;
-    psychological_impact_en?: string;
   }>).map(r => ({
     id: String(r.id),
     question_text: r.question_text,
-    question_text_en: r.question_text_en || '',  // English translation
     answer: r.answer,
     answer_preview: r.answer.substring(0, 200).replace(/\n/g, ' ') + '...',
     category: r.category as CategoryId,
@@ -101,7 +96,6 @@ function normalizeRecords(data: unknown[]): Record[] {
     classification: r.classification,
     classification_reason: r.classification_reason,
     psychological_impact: r.psychological_impact || '',
-    psychological_impact_en: r.psychological_impact_en || '',
   }));
 }
 
@@ -223,7 +217,6 @@ export function searchRecords(
     const q = query.toLowerCase();
     filtered = filtered.filter(r =>
       r.question_text.toLowerCase().includes(q) ||
-      r.question_text_en.toLowerCase().includes(q) ||
       r.answer.toLowerCase().includes(q) ||
       r.triggers_detected.some(t => t.toLowerCase().includes(q))
     );

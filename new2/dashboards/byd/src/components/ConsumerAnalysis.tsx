@@ -15,9 +15,7 @@ function getImpactLevel(classification: string): 'high' | 'medium' | 'low' {
 }
 
 export default function ConsumerAnalysis({ record, variant = 'default' }: ConsumerAnalysisProps) {
-  // Read psychological_impact directly from record (new format)
   const analysis = record.psychological_impact || '';
-  const analysisEn = record.psychological_impact_en || '';
   const impactLevel = getImpactLevel(record.classification);
 
   const getImpactIcon = () => {
@@ -62,14 +60,7 @@ export default function ConsumerAnalysis({ record, variant = 'default' }: Consum
       <div className="rounded-lg border border-border bg-surface/50 p-4">
         <div className="flex items-start gap-3">
           <Brain size={16} className="mt-0.5 shrink-0 text-text-muted" />
-          <div>
-            {analysisEn && (
-              <p className="text-sm leading-relaxed text-text-muted">{analysisEn}</p>
-            )}
-            {analysis && (
-              <p className="mt-2 text-xs leading-relaxed text-text-muted/60 italic">{analysis}</p>
-            )}
-          </div>
+          <p className="text-sm leading-relaxed text-text-muted">{analysis}</p>
         </div>
       </div>
     );
@@ -88,16 +79,7 @@ export default function ConsumerAnalysis({ record, variant = 'default' }: Consum
         </div>
       </div>
       <div className="p-4">
-        {analysisEn && (
-          <p className="text-sm leading-relaxed text-text-muted">
-            {analysisEn}
-          </p>
-        )}
-        {analysis && (
-          <p className="mt-3 text-xs leading-relaxed text-text-muted/60 italic border-t border-border/50 pt-3">
-            <span className="text-text-muted/40 not-italic">ES: </span>{analysis}
-          </p>
-        )}
+        <p className="text-sm leading-relaxed text-text-muted">{analysis}</p>
       </div>
     </div>
   );
