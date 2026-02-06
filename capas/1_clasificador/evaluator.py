@@ -16,9 +16,9 @@ import requests
 OPENROUTER_API_KEY = os.environ.get('OPENROUTER_API_KEY', '')
 OPENROUTER_URL = "https://openrouter.ai/api/v1/chat/completions"
 
-# Model recommendation for classification (cheap & effective)
-# google/gemini-2.0-flash-lite-001 - Very cheap, fast, good for classification
-DEFAULT_MODEL = "google/gemini-2.0-flash-lite-001"
+# Model recommendation for classification
+# openai/gpt-4o-mini - Good balance of accuracy and cost, more consistent than Gemini
+DEFAULT_MODEL = "openai/gpt-4o-mini"
 
 
 def classify_sentiment(
@@ -54,11 +54,14 @@ def classify_sentiment(
     mention_context = ""
     if not mention:
         mention_context = f"""
-IMPORTANT CONTEXT: The brand "{brand}" is NOT mentioned in this answer.
-You must consider the QUESTION CONTEXT to determine if this is good or bad:
-- If the question asks about problems/issues/what to avoid → NOT being mentioned is POSITIVE (OPPORTUNITY)
-- If the question directly asks about {brand} → NOT being mentioned is NEGATIVE (CRITICAL)
-- If the question is a general comparison → NOT being mentioned may be neutral (WARNING) or negative (CRITICAL)
+⚠️ CRITICAL CONTEXT: The brand "{brand}" is NOT mentioned in this answer.
+
+MANDATORY RULE for "no mention" cases:
+1. If question contains "avoid", "problem", "issue", "bad", "worst", "stay away" → {brand} NOT being on this negative list = OPPORTUNITY
+2. If question directly asks about {brand} specifically → NOT being mentioned = CRITICAL
+3. If question is general comparison → NOT being mentioned = WARNING or CRITICAL
+
+EXAMPLE: Question "Which EVs should I avoid?" + {brand} not in answer = OPPORTUNITY (good for {brand})
 """
 
     prompt = f"""STEP 1 - LANGUAGE DETECTION (CRITICAL):

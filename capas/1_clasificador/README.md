@@ -167,11 +167,11 @@ The evaluator uses LLM-based analysis considering **both question context and an
 
 ## Evaluator Model
 
-Default: `google/gemini-2.0-flash-lite-001`
+Default: `openai/gpt-4o-mini`
 
-- Very cheap (~$0.001 per 269 answers)
-- Fast
-- Good for classification
+- Good balance of accuracy and cost
+- More consistent than Gemini on edge cases
+- Better at distinguishing sentiment vs position in rankings
 
 Change with `--model`:
 ```bash
