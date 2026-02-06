@@ -78,6 +78,12 @@ CLASSIFICATION RULES:
 - WARNING: The answer is neutral or mixed. Contains both positives and negatives, or is purely informational without clear stance.
 - CRITICAL: The answer is unfavorable/negative for {brand}. Criticizes it, highlights problems, recommends alternatives instead, OR if the question directly asks about {brand} and it's not mentioned.
 
+IMPORTANT - SENTIMENT vs POSITION:
+- Focus on the ACTUAL LANGUAGE used to describe {brand}, not just its position in a list.
+- Being listed last or in a lower tier with POSITIVE language (e.g., "great for X", "capable", "good value") is NOT negative sentiment.
+- CRITICAL requires actual negative statements: criticism, warnings, problems mentioned, or explicit discouragement.
+- Position alone does not determine sentiment. A brand can be listed last but still described positively.
+
 IMPORTANT:
 - Evaluate the OVERALL sentiment considering BOTH question context AND answer content.
 - Consider what NOT being mentioned implies based on the question type.
