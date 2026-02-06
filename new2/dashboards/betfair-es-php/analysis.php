@@ -187,6 +187,11 @@ include 'includes/navigation.php';
                                         <p class="text-sm text-text line-clamp-2">
                                             <?php echo htmlspecialchars($record['question_text']); ?>
                                         </p>
+                                        <?php if (!empty($record['question_text_en'])): ?>
+                                            <p class="mt-1 text-xs text-text-muted/70 italic line-clamp-2">
+                                                <?php echo htmlspecialchars($record['question_text_en']); ?>
+                                            </p>
+                                        <?php endif; ?>
                                         <div class="mt-2 flex items-center gap-2">
                                             <?php echo getClassificationBadge($record['classification']); ?>
                                         </div>

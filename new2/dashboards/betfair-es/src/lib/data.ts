@@ -19,6 +19,7 @@ export interface TriggerDetail {
 export interface Record {
   id: string;
   question_text: string;
+  question_text_en: string;  // English translation of the question
   answer: string;
   answer_preview: string;
   category: CategoryId;
@@ -67,6 +68,7 @@ function normalizeRecords(data: unknown[]): Record[] {
   return (data as Array<{
     id: number | string;
     question_text: string;
+    question_text_en?: string;
     answer: string;
     category: number;
     category_name: string;
@@ -81,6 +83,7 @@ function normalizeRecords(data: unknown[]): Record[] {
   }>).map(r => ({
     id: String(r.id),
     question_text: r.question_text,
+    question_text_en: r.question_text_en || '',  // English translation
     answer: r.answer,
     answer_preview: r.answer.substring(0, 200).replace(/\n/g, ' ') + '...',
     category: r.category as CategoryId,
@@ -217,6 +220,7 @@ export function searchRecords(
     const q = query.toLowerCase();
     filtered = filtered.filter(r =>
       r.question_text.toLowerCase().includes(q) ||
+      r.question_text_en.toLowerCase().includes(q) ||
       r.answer.toLowerCase().includes(q) ||
       r.triggers_detected.some(t => t.toLowerCase().includes(q))
     );

@@ -80,9 +80,16 @@ include 'includes/navigation.php';
                     <?php else: ?>
                         <?php foreach ($criticalRecords as $record): ?>
                             <a href="detail.php?id=<?php echo urlencode($record['id']); ?>" class="block p-4 hover:bg-surface/50 transition-colors">
-                                <p class="text-sm text-text mb-2 line-clamp-2">
+                                <p class="text-sm text-text mb-1 line-clamp-2">
                                     <?php echo htmlspecialchars($record['question_text']); ?>
                                 </p>
+                                <?php if (!empty($record['question_text_en'])): ?>
+                                    <p class="text-xs text-text-muted/70 italic mb-2 line-clamp-2">
+                                        <?php echo htmlspecialchars($record['question_text_en']); ?>
+                                    </p>
+                                <?php else: ?>
+                                    <div class="mb-2"></div>
+                                <?php endif; ?>
                                 <div class="flex items-center gap-2 flex-wrap">
                                     <?php echo getClassificationBadge($record['classification']); ?>
                                     <span class="text-xs text-text-muted">

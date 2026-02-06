@@ -54,9 +54,16 @@ export default function RecordCard({ record, showPreview = true, basePath = '' }
       <div className="group cursor-pointer rounded-lg border border-border bg-surface p-4 transition-all hover:border-text-muted/30">
         {/* Header: Question + Badge */}
         <div className="mb-3 flex items-start justify-between gap-3">
-          <h3 className="flex-1 text-sm font-medium text-text group-hover:text-text">
-            {record.question_text}
-          </h3>
+          <div className="flex-1">
+            <h3 className="text-sm font-medium text-text group-hover:text-text">
+              {record.question_text}
+            </h3>
+            {record.question_text_en && (
+              <p className="mt-1 text-xs text-text-muted/70 italic">
+                {record.question_text_en}
+              </p>
+            )}
+          </div>
           <ClassificationBadge classification={record.classification} size="sm" />
         </div>
 

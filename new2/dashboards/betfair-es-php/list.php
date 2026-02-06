@@ -93,9 +93,16 @@ include 'includes/navigation.php';
                 <?php foreach ($records as $record): ?>
                     <a href="detail.php?id=<?php echo urlencode($record['id']); ?>" class="block rounded-lg border border-border bg-surface p-4 hover:border-text-muted transition-colors">
                         <!-- Question -->
-                        <p class="text-sm text-text mb-3 line-clamp-2">
+                        <p class="text-sm text-text mb-1 line-clamp-2">
                             <?php echo htmlspecialchars($record['question_text']); ?>
                         </p>
+                        <?php if (!empty($record['question_text_en'])): ?>
+                            <p class="text-xs text-text-muted/70 italic mb-3 line-clamp-2">
+                                <?php echo htmlspecialchars($record['question_text_en']); ?>
+                            </p>
+                        <?php else: ?>
+                            <div class="mb-3"></div>
+                        <?php endif; ?>
 
                         <!-- Meta row -->
                         <div class="flex items-center justify-between gap-4">

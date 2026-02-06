@@ -64,9 +64,16 @@ include 'includes/header.php';
         <div class="rounded-lg border border-border bg-surface">
             <!-- Header with classification -->
             <div class="flex items-start justify-between gap-4 border-b border-border p-4 sm:p-6">
-                <h1 class="text-base font-medium text-text sm:text-lg">
-                    <?php echo htmlspecialchars($record['question_text']); ?>
-                </h1>
+                <div class="flex-1">
+                    <h1 class="text-base font-medium text-text sm:text-lg">
+                        <?php echo htmlspecialchars($record['question_text']); ?>
+                    </h1>
+                    <?php if (!empty($record['question_text_en'])): ?>
+                        <p class="mt-2 text-sm text-text-muted/70 italic">
+                            <?php echo htmlspecialchars($record['question_text_en']); ?>
+                        </p>
+                    <?php endif; ?>
+                </div>
                 <?php echo getClassificationBadge($record['classification']); ?>
             </div>
 
@@ -151,6 +158,9 @@ include 'includes/header.php';
                         </div>
                         <div class="flex-1">
                             <p class="text-sm text-text"><?php echo htmlspecialchars($record['question_text']); ?></p>
+                            <?php if (!empty($record['question_text_en'])): ?>
+                                <p class="mt-1 text-xs text-text-muted/70 italic"><?php echo htmlspecialchars($record['question_text_en']); ?></p>
+                            <?php endif; ?>
                         </div>
                     </div>
                     <!-- Answer -->

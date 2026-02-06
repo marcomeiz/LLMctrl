@@ -120,9 +120,16 @@ export default function BetfairDetailPage() {
           <div className="rounded-lg border border-border bg-surface">
             {/* Header with classification */}
             <div className="flex items-start justify-between gap-4 border-b border-border p-4 sm:p-6">
-              <h1 className="text-base font-medium text-text sm:text-lg">
-                {record.question_text}
-              </h1>
+              <div className="flex-1">
+                <h1 className="text-base font-medium text-text sm:text-lg">
+                  {record.question_text}
+                </h1>
+                {record.question_text_en && (
+                  <p className="mt-2 text-sm text-text-muted/70 italic">
+                    {record.question_text_en}
+                  </p>
+                )}
+              </div>
               <ClassificationBadge classification={record.classification} />
             </div>
 
