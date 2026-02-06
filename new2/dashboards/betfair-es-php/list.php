@@ -5,7 +5,7 @@ require_once 'includes/data.php';
 
 requireAuth();
 
-$pageTitle = 'Registros - ' . SITE_TITLE;
+$pageTitle = 'Records - ' . SITE_TITLE;
 
 // Get filter parameters
 $searchQuery = $_GET['q'] ?? '';
@@ -25,11 +25,11 @@ include 'includes/navigation.php';
         <!-- Page title -->
         <div class="mb-6">
             <div class="flex items-center gap-2">
-                <h1 class="text-lg font-semibold text-text sm:text-xl">Registros</h1>
+                <h1 class="text-lg font-semibold text-text sm:text-xl">Records</h1>
                 <span class="text-lg">🇪🇸</span>
             </div>
             <p class="text-sm text-text-muted">
-                <?php echo $totalResults; ?> registros encontrados
+                <?php echo $totalResults; ?> records found
             </p>
         </div>
 
@@ -41,7 +41,7 @@ include 'includes/navigation.php';
                     type="text"
                     name="q"
                     value="<?php echo htmlspecialchars($searchQuery); ?>"
-                    placeholder="Buscar en preguntas, respuestas o triggers..."
+                    placeholder="Search in questions, answers or triggers..."
                     class="w-full rounded-lg border border-border bg-surface px-4 py-2.5 pl-10 text-sm text-text placeholder-text-muted focus:border-text-muted focus:outline-none focus:ring-1 focus:ring-text-muted"
                 >
                 <svg class="absolute left-3 top-1/2 -translate-y-1/2 text-text-muted" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -55,16 +55,16 @@ include 'includes/navigation.php';
                 <!-- Classification filters -->
                 <div class="flex gap-1 rounded-lg border border-border p-1">
                     <button type="submit" name="classification" value="ALL" class="rounded px-3 py-1 text-xs font-medium transition-colors <?php echo $classificationFilter === 'ALL' ? 'bg-text text-background' : 'text-text-muted hover:text-text'; ?>">
-                        Todos
+                        All
                     </button>
                     <button type="submit" name="classification" value="CRITICAL" class="rounded px-3 py-1 text-xs font-medium transition-colors <?php echo $classificationFilter === 'CRITICAL' ? 'bg-red-500 text-white' : 'text-red-500 hover:bg-red-500/10'; ?>">
-                        Críticos
+                        Critical
                     </button>
                     <button type="submit" name="classification" value="WARNING" class="rounded px-3 py-1 text-xs font-medium transition-colors <?php echo $classificationFilter === 'WARNING' ? 'bg-amber-500 text-white' : 'text-amber-500 hover:bg-amber-500/10'; ?>">
-                        Advertencias
+                        Warnings
                     </button>
                     <button type="submit" name="classification" value="OPPORTUNITY" class="rounded px-3 py-1 text-xs font-medium transition-colors <?php echo $classificationFilter === 'OPPORTUNITY' ? 'bg-green-500 text-white' : 'text-green-500 hover:bg-green-500/10'; ?>">
-                        Oportunidades
+                        Opportunities
                     </button>
                 </div>
 
@@ -73,7 +73,7 @@ include 'includes/navigation.php';
 
                 <!-- Category filter -->
                 <select name="category" onchange="this.form.submit()" class="rounded-lg border border-border bg-surface px-3 py-1.5 text-xs text-text-muted focus:outline-none focus:ring-1 focus:ring-text-muted cursor-pointer">
-                    <option value="ALL" <?php echo $categoryFilter === 'ALL' ? 'selected' : ''; ?>>Todas las categorías</option>
+                    <option value="ALL" <?php echo $categoryFilter === 'ALL' ? 'selected' : ''; ?>>All categories</option>
                     <?php foreach (CATEGORY_NAMES as $id => $name): ?>
                         <option value="<?php echo $id; ?>" <?php echo $categoryFilter == $id ? 'selected' : ''; ?>>
                             <?php echo htmlspecialchars($name); ?>
@@ -87,7 +87,7 @@ include 'includes/navigation.php';
         <div class="space-y-3">
             <?php if (empty($records)): ?>
                 <div class="rounded-lg border border-border bg-surface p-8 text-center">
-                    <p class="text-text-muted">No se encontraron registros</p>
+                    <p class="text-text-muted">No records found</p>
                 </div>
             <?php else: ?>
                 <?php foreach ($records as $record): ?>

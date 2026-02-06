@@ -67,9 +67,9 @@ export default function BetfairDetailPage() {
         <Header />
         <main className="flex flex-1 items-center justify-center">
           <div className="text-center">
-            <p className="text-text-muted">Registro no encontrado</p>
+            <p className="text-text-muted">Record not found</p>
             <Link href="/betfair/list" className="mt-4 inline-block text-sm text-text hover:underline">
-              ← Volver a la lista
+              ← Back to list
             </Link>
           </div>
         </main>
@@ -91,7 +91,7 @@ export default function BetfairDetailPage() {
               className="inline-flex items-center gap-1 text-sm text-text-muted hover:text-text"
             >
               <ArrowLeft size={16} />
-              <span>Volver</span>
+              <span>Back</span>
             </Link>
 
             <div className="flex items-center gap-2">
@@ -99,7 +99,7 @@ export default function BetfairDetailPage() {
                 <Link
                   href={`/betfair/detail/${prevRecord.id}`}
                   className="flex h-8 w-8 items-center justify-center rounded border border-border text-text-muted hover:border-text-muted hover:text-text"
-                  title="Anterior (←)"
+                  title="Previous (←)"
                 >
                   <ChevronLeft size={18} />
                 </Link>
@@ -108,7 +108,7 @@ export default function BetfairDetailPage() {
                 <Link
                   href={`/betfair/detail/${nextRecord.id}`}
                   className="flex h-8 w-8 items-center justify-center rounded border border-border text-text-muted hover:border-text-muted hover:text-text"
-                  title="Siguiente (→)"
+                  title="Next (→)"
                 >
                   <ChevronRight size={18} />
                 </Link>
@@ -129,36 +129,36 @@ export default function BetfairDetailPage() {
             {/* Metadata */}
             <div className="grid gap-4 border-b border-border p-4 sm:grid-cols-2 sm:p-6">
               <div>
-                <span className="text-xs text-text-muted">Categoría</span>
+                <span className="text-xs text-text-muted">Category</span>
                 <p className="text-sm font-medium text-text">{record.category_name}</p>
               </div>
               <div>
-                <span className="text-xs text-text-muted">¿Marca Mencionada?</span>
+                <span className="text-xs text-text-muted">Brand Mentioned?</span>
                 <p className={`text-sm font-medium ${record.mention ? 'text-opportunity' : 'text-text-muted'}`}>
-                  {record.mention ? 'Sí' : 'No'}
+                  {record.mention ? 'Yes' : 'No'}
                 </p>
               </div>
               <div>
-                <span className="text-xs text-text-muted">Posición en Ranking</span>
+                <span className="text-xs text-text-muted">Ranking Position</span>
                 {(() => {
                   const pos = record.ranking_list?.findIndex(b => b.toLowerCase() === 'betfair');
                   if (pos !== undefined && pos >= 0) {
                     return (
                       <p className="text-lg font-bold text-opportunity">
-                        #{pos + 1} <span className="text-sm font-normal text-text-muted">de {record.ranking_list?.length}</span>
+                        #{pos + 1} <span className="text-sm font-normal text-text-muted">of {record.ranking_list?.length}</span>
                       </p>
                     );
                   }
-                  return <p className="text-sm text-text-muted">Sin ranking</p>;
+                  return <p className="text-sm text-text-muted">No ranking</p>;
                 })()}
               </div>
               <div>
-                <span className="text-xs text-text-muted">Razón de Clasificación</span>
+                <span className="text-xs text-text-muted">Classification Reason</span>
                 <p className="text-sm font-medium text-text">{record.classification_reason}</p>
               </div>
               {record.ranking_list && record.ranking_list.length > 0 && (
                 <div className="sm:col-span-2">
-                  <span className="text-xs text-text-muted">Ranking Completo</span>
+                  <span className="text-xs text-text-muted">Full Ranking</span>
                   <div className="mt-2 flex flex-wrap gap-2">
                     {record.ranking_list.map((brand, i) => (
                       <span
@@ -181,7 +181,7 @@ export default function BetfairDetailPage() {
             {record.triggers_detail.length > 0 && (
               <div className="border-b border-border p-4 sm:p-6">
                 <h2 className="mb-4 text-sm font-medium text-text">
-                  Triggers Detectados ({record.triggers_detail.length})
+                  Detected Triggers ({record.triggers_detail.length})
                 </h2>
                 <div className="space-y-4">
                   {record.triggers_detail.map((trigger, i) => (
@@ -209,7 +209,7 @@ export default function BetfairDetailPage() {
 
             {/* Response - ChatGPT style chat with typing animation */}
             <div className="border-b border-border p-4 sm:p-6">
-              <h2 className="mb-4 text-sm font-medium text-text">Respuesta ChatGPT</h2>
+              <h2 className="mb-4 text-sm font-medium text-text">ChatGPT Response</h2>
               <ChatGPTResponse
                 question={record.question_text}
                 answer={fullAnswer || record.answer_preview}
@@ -226,7 +226,7 @@ export default function BetfairDetailPage() {
             {/* Citations */}
             {record.citations.length > 0 && (
               <div className="p-4 sm:p-6">
-                <h2 className="mb-3 text-sm font-medium text-text">Fuentes Citadas</h2>
+                <h2 className="mb-3 text-sm font-medium text-text">Cited Sources</h2>
                 <div className="flex flex-wrap gap-2">
                   {record.citations.map((citation, i) => (
                     <span

@@ -42,11 +42,11 @@ export default function BetfairDashboard() {
           {/* Page title */}
           <div className="mb-6">
             <div className="flex items-center gap-2">
-              <h1 className="text-lg font-semibold text-text sm:text-xl">Resumen Ejecutivo</h1>
+              <h1 className="text-lg font-semibold text-text sm:text-xl">Executive Summary</h1>
               <span className="text-lg">🇪🇸</span>
             </div>
             <p className="text-sm text-text-muted">
-              {summary.total} respuestas monitoreadas · Mercado España
+              {summary.total} monitored responses · Spain Market
             </p>
           </div>
 
@@ -84,12 +84,12 @@ export default function BetfairDashboard() {
           {/* Recent Critical Records */}
           <div className="mb-6">
             <div className="mb-4 flex items-center justify-between">
-              <h2 className="text-sm font-medium text-text">Últimos CRITICAL</h2>
+              <h2 className="text-sm font-medium text-text">Recent CRITICAL</h2>
               <a
                 href="/betfair/list?classification=CRITICAL"
                 className="text-xs text-text-muted hover:text-text"
               >
-                Ver todos →
+                View all →
               </a>
             </div>
             <div className="space-y-3">
@@ -98,7 +98,7 @@ export default function BetfairDashboard() {
               ))}
               {criticalRecords.length === 0 && (
                 <p className="text-sm text-text-muted py-4 text-center">
-                  No se encontraron registros críticos
+                  No critical records found
                 </p>
               )}
             </div>
@@ -106,7 +106,7 @@ export default function BetfairDashboard() {
 
           {/* Top Triggers */}
           <div className="rounded-lg border border-border bg-surface p-4">
-            <h3 className="mb-3 text-sm font-medium text-text">Triggers Más Detectados</h3>
+            <h3 className="mb-3 text-sm font-medium text-text">Top Detected Triggers</h3>
             <div className="flex flex-wrap gap-2">
               {summary.topTriggers.slice(0, 8).map(([trigger, count]) => (
                 <span
@@ -118,7 +118,7 @@ export default function BetfairDashboard() {
                 </span>
               ))}
               {summary.topTriggers.length === 0 && (
-                <span className="text-sm text-text-muted">No se detectaron triggers</span>
+                <span className="text-sm text-text-muted">No triggers detected</span>
               )}
             </div>
           </div>

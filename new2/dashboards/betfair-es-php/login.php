@@ -17,12 +17,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         header('Location: home.php');
         exit;
     } else {
-        $error = 'Contraseña incorrecta';
+        $error = 'Incorrect password';
     }
 }
 ?>
 <!DOCTYPE html>
-<html lang="es" class="dark">
+<html lang="en" class="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -50,12 +50,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <!-- Logo / Title -->
         <div class="text-center mb-8">
             <h1 class="text-2xl font-bold text-text mb-2">LLMCtrl</h1>
-            <p class="text-sm text-text-muted">Betfair España Dashboard</p>
+            <p class="text-sm text-text-muted">Betfair Spain Dashboard</p>
         </div>
 
         <!-- Login Card -->
         <div class="rounded-lg border border-border bg-surface p-6">
-            <h2 class="text-lg font-medium text-text mb-4">Iniciar sesión</h2>
+            <h2 class="text-lg font-medium text-text mb-4">Login</h2>
 
             <?php if ($error): ?>
                 <div class="mb-4 p-3 rounded-lg bg-red-500/10 border border-red-500/20 text-red-500 text-sm">
@@ -66,7 +66,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <form method="POST" action="">
                 <div class="mb-4">
                     <label for="password" class="block text-sm font-medium text-text-muted mb-2">
-                        Contraseña
+                        Password
                     </label>
                     <input
                         type="password"
@@ -75,7 +75,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         required
                         autofocus
                         class="w-full rounded-lg border border-border bg-background px-4 py-2.5 text-text placeholder-text-muted focus:border-text-muted focus:outline-none focus:ring-1 focus:ring-text-muted"
-                        placeholder="Introduce la contraseña"
+                        placeholder="Enter password"
                     >
                 </div>
 
@@ -83,7 +83,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     type="submit"
                     class="w-full rounded-lg bg-text px-4 py-2.5 text-sm font-medium text-background hover:bg-text/90 transition-colors"
                 >
-                    Acceder
+                    Login
                 </button>
             </form>
         </div>

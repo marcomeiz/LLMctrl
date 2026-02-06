@@ -5,7 +5,7 @@ require_once 'includes/data.php';
 
 requireAuth();
 
-$pageTitle = 'Resumen - ' . SITE_TITLE;
+$pageTitle = 'Summary - ' . SITE_TITLE;
 $summary = getSummary();
 $criticalRecords = array_slice(getRecordsByClassification('CRITICAL'), 0, 5);
 
@@ -18,11 +18,11 @@ include 'includes/navigation.php';
         <!-- Page title -->
         <div class="mb-6">
             <div class="flex items-center gap-2">
-                <h1 class="text-lg font-semibold text-text sm:text-xl">Resumen Ejecutivo</h1>
+                <h1 class="text-lg font-semibold text-text sm:text-xl">Executive Summary</h1>
                 <span class="text-lg">🇪🇸</span>
             </div>
             <p class="text-sm text-text-muted">
-                Monitorización de respuestas de ChatGPT sobre Betfair
+                ChatGPT response monitoring about Betfair
             </p>
         </div>
 
@@ -30,34 +30,34 @@ include 'includes/navigation.php';
         <div class="mb-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             <!-- Total -->
             <div class="rounded-lg border border-border bg-surface p-4">
-                <p class="text-xs text-text-muted mb-1">Total Registros</p>
+                <p class="text-xs text-text-muted mb-1">Total Records</p>
                 <p class="text-2xl font-bold text-text"><?php echo $summary['total']; ?></p>
             </div>
 
             <!-- Critical -->
             <div class="rounded-lg border border-red-500/20 bg-red-500/5 p-4">
-                <p class="text-xs text-text-muted mb-1">Críticos</p>
+                <p class="text-xs text-text-muted mb-1">Critical</p>
                 <p class="text-2xl font-bold text-red-500"><?php echo $summary['critical']; ?></p>
                 <p class="text-xs text-text-muted mt-1">
-                    <?php echo round(($summary['critical'] / $summary['total']) * 100, 1); ?>% del total
+                    <?php echo round(($summary['critical'] / $summary['total']) * 100, 1); ?>% of total
                 </p>
             </div>
 
             <!-- Warning -->
             <div class="rounded-lg border border-amber-500/20 bg-amber-500/5 p-4">
-                <p class="text-xs text-text-muted mb-1">Advertencias</p>
+                <p class="text-xs text-text-muted mb-1">Warnings</p>
                 <p class="text-2xl font-bold text-amber-500"><?php echo $summary['warning']; ?></p>
                 <p class="text-xs text-text-muted mt-1">
-                    <?php echo round(($summary['warning'] / $summary['total']) * 100, 1); ?>% del total
+                    <?php echo round(($summary['warning'] / $summary['total']) * 100, 1); ?>% of total
                 </p>
             </div>
 
             <!-- Opportunity -->
             <div class="rounded-lg border border-green-500/20 bg-green-500/5 p-4">
-                <p class="text-xs text-text-muted mb-1">Oportunidades</p>
+                <p class="text-xs text-text-muted mb-1">Opportunities</p>
                 <p class="text-2xl font-bold text-green-500"><?php echo $summary['opportunity']; ?></p>
                 <p class="text-xs text-text-muted mt-1">
-                    <?php echo round(($summary['opportunity'] / $summary['total']) * 100, 1); ?>% del total
+                    <?php echo round(($summary['opportunity'] / $summary['total']) * 100, 1); ?>% of total
                 </p>
             </div>
         </div>
@@ -67,15 +67,15 @@ include 'includes/navigation.php';
             <!-- Recent Critical -->
             <div class="rounded-lg border border-border bg-surface">
                 <div class="flex items-center justify-between border-b border-border p-4">
-                    <h2 class="text-sm font-medium text-text">Registros Críticos Recientes</h2>
+                    <h2 class="text-sm font-medium text-text">Recent Critical Records</h2>
                     <a href="list.php?classification=CRITICAL" class="text-xs text-text-muted hover:text-text">
-                        Ver todos →
+                        View all →
                     </a>
                 </div>
                 <div class="divide-y divide-border">
                     <?php if (empty($criticalRecords)): ?>
                         <div class="p-4 text-sm text-text-muted">
-                            No hay registros críticos
+                            No critical records
                         </div>
                     <?php else: ?>
                         <?php foreach ($criticalRecords as $record): ?>
@@ -98,11 +98,11 @@ include 'includes/navigation.php';
             <!-- Top Triggers -->
             <div class="rounded-lg border border-border bg-surface">
                 <div class="flex items-center justify-between border-b border-border p-4">
-                    <h2 class="text-sm font-medium text-text">Top Triggers Detectados</h2>
+                    <h2 class="text-sm font-medium text-text">Top Detected Triggers</h2>
                 </div>
                 <div class="p-4">
                     <?php if (empty($summary['topTriggers'])): ?>
-                        <p class="text-sm text-text-muted">No hay triggers detectados</p>
+                        <p class="text-sm text-text-muted">No triggers detected</p>
                     <?php else: ?>
                         <div class="space-y-3">
                             <?php foreach ($summary['topTriggers'] as $trigger => $count): ?>
@@ -121,7 +121,7 @@ include 'includes/navigation.php';
 
         <!-- LLMs Monitored -->
         <div class="mt-6 rounded-lg border border-border bg-surface p-4">
-            <h2 class="text-sm font-medium text-text mb-4">LLMs Monitoreados</h2>
+            <h2 class="text-sm font-medium text-text mb-4">Monitored LLMs</h2>
             <div class="flex flex-wrap gap-3">
                 <div class="flex items-center gap-2 rounded-full border border-green-500/20 bg-green-500/10 px-3 py-1.5">
                     <span class="w-2 h-2 rounded-full bg-green-500"></span>

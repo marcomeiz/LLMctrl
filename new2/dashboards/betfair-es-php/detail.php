@@ -10,13 +10,13 @@ $record = getRecordById($id);
 
 if (!$record) {
     header('HTTP/1.0 404 Not Found');
-    $pageTitle = 'No encontrado - ' . SITE_TITLE;
+    $pageTitle = 'Not found - ' . SITE_TITLE;
     include 'includes/header.php';
     ?>
     <main class="flex-1 flex items-center justify-center">
         <div class="text-center">
-            <p class="text-text-muted mb-4">Registro no encontrado</p>
-            <a href="list.php" class="text-sm text-text hover:underline">← Volver a la lista</a>
+            <p class="text-text-muted mb-4">Record not found</p>
+            <a href="list.php" class="text-sm text-text hover:underline">← Back to list</a>
         </div>
     </main>
     <?php
@@ -24,7 +24,7 @@ if (!$record) {
     exit;
 }
 
-$pageTitle = 'Detalle - ' . SITE_TITLE;
+$pageTitle = 'Detail - ' . SITE_TITLE;
 $nav = getNavigation($id);
 
 include 'includes/header.php';
@@ -39,19 +39,19 @@ include 'includes/header.php';
                     <line x1="19" y1="12" x2="5" y2="12"></line>
                     <polyline points="12 19 5 12 12 5"></polyline>
                 </svg>
-                <span>Volver</span>
+                <span>Back</span>
             </a>
 
             <div class="flex items-center gap-2">
                 <?php if ($nav['prev']): ?>
-                    <a href="detail.php?id=<?php echo urlencode($nav['prev']); ?>" class="flex h-8 w-8 items-center justify-center rounded border border-border text-text-muted hover:border-text-muted hover:text-text" title="Anterior">
+                    <a href="detail.php?id=<?php echo urlencode($nav['prev']); ?>" class="flex h-8 w-8 items-center justify-center rounded border border-border text-text-muted hover:border-text-muted hover:text-text" title="Previous">
                         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <polyline points="15 18 9 12 15 6"></polyline>
                         </svg>
                     </a>
                 <?php endif; ?>
                 <?php if ($nav['next']): ?>
-                    <a href="detail.php?id=<?php echo urlencode($nav['next']); ?>" class="flex h-8 w-8 items-center justify-center rounded border border-border text-text-muted hover:border-text-muted hover:text-text" title="Siguiente">
+                    <a href="detail.php?id=<?php echo urlencode($nav['next']); ?>" class="flex h-8 w-8 items-center justify-center rounded border border-border text-text-muted hover:border-text-muted hover:text-text" title="Next">
                         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <polyline points="9 18 15 12 9 6"></polyline>
                         </svg>
@@ -73,37 +73,37 @@ include 'includes/header.php';
             <!-- Metadata -->
             <div class="grid gap-4 border-b border-border p-4 sm:grid-cols-2 sm:p-6">
                 <div>
-                    <span class="text-xs text-text-muted">Categoría</span>
+                    <span class="text-xs text-text-muted">Category</span>
                     <p class="text-sm font-medium text-text"><?php echo htmlspecialchars($record['category_name']); ?></p>
                 </div>
                 <div>
-                    <span class="text-xs text-text-muted">¿Marca Mencionada?</span>
+                    <span class="text-xs text-text-muted">Brand Mentioned?</span>
                     <p class="text-sm font-medium <?php echo $record['mention'] ? 'text-green-500' : 'text-text-muted'; ?>">
-                        <?php echo $record['mention'] ? 'Sí' : 'No'; ?>
+                        <?php echo $record['mention'] ? 'Yes' : 'No'; ?>
                     </p>
                 </div>
                 <div>
-                    <span class="text-xs text-text-muted">Posición en Ranking</span>
+                    <span class="text-xs text-text-muted">Ranking Position</span>
                     <?php
                     $pos = array_search('betfair', array_map('strtolower', $record['ranking_list']));
                     if ($pos !== false):
                     ?>
                         <p class="text-lg font-bold text-green-500">
                             #<?php echo $pos + 1; ?>
-                            <span class="text-sm font-normal text-text-muted">de <?php echo count($record['ranking_list']); ?></span>
+                            <span class="text-sm font-normal text-text-muted">of <?php echo count($record['ranking_list']); ?></span>
                         </p>
                     <?php else: ?>
-                        <p class="text-sm text-text-muted">Sin ranking</p>
+                        <p class="text-sm text-text-muted">Not ranked</p>
                     <?php endif; ?>
                 </div>
                 <div>
-                    <span class="text-xs text-text-muted">Razón de Clasificación</span>
+                    <span class="text-xs text-text-muted">Classification Reason</span>
                     <p class="text-sm font-medium text-text"><?php echo htmlspecialchars($record['classification_reason']); ?></p>
                 </div>
 
                 <?php if (!empty($record['ranking_list'])): ?>
                     <div class="sm:col-span-2">
-                        <span class="text-xs text-text-muted">Ranking Completo</span>
+                        <span class="text-xs text-text-muted">Full Ranking</span>
                         <div class="mt-2 flex flex-wrap gap-2">
                             <?php foreach ($record['ranking_list'] as $i => $brand): ?>
                                 <?php $isBetfair = strtolower($brand) === 'betfair'; ?>
@@ -120,7 +120,7 @@ include 'includes/header.php';
             <?php if (!empty($record['triggers_detail'])): ?>
                 <div class="border-b border-border p-4 sm:p-6">
                     <h2 class="mb-4 text-sm font-medium text-text">
-                        Triggers Detectados (<?php echo count($record['triggers_detail']); ?>)
+                        Detected Triggers (<?php echo count($record['triggers_detail']); ?>)
                     </h2>
                     <div class="space-y-4">
                         <?php foreach ($record['triggers_detail'] as $trigger): ?>
@@ -142,7 +142,7 @@ include 'includes/header.php';
 
             <!-- Response - ChatGPT style -->
             <div class="border-b border-border p-4 sm:p-6">
-                <h2 class="mb-4 text-sm font-medium text-text">Respuesta ChatGPT</h2>
+                <h2 class="mb-4 text-sm font-medium text-text">ChatGPT Response</h2>
                 <div class="rounded-lg border border-border bg-background p-4">
                     <!-- Question -->
                     <div class="mb-4 flex items-start gap-3">
@@ -222,7 +222,7 @@ include 'includes/header.php';
             <!-- Citations -->
             <?php if (!empty($record['citations'])): ?>
                 <div class="p-4 sm:p-6">
-                    <h2 class="mb-3 text-sm font-medium text-text">Fuentes Citadas</h2>
+                    <h2 class="mb-3 text-sm font-medium text-text">Cited Sources</h2>
                     <div class="flex flex-wrap gap-2">
                         <?php foreach ($record['citations'] as $citation): ?>
                             <span class="inline-flex items-center gap-1 rounded border border-border px-2 py-1 text-xs text-text-muted">

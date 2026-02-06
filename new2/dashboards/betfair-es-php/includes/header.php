@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="es" class="dark">
+<html lang="en" class="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -58,14 +58,14 @@
             <div class="flex items-center gap-3">
                 <!-- Market badge -->
                 <span class="rounded-md border border-border bg-surface px-3 py-1.5 text-sm text-text-muted">
-                    🇪🇸 España
+                    🇪🇸 Spain
                 </span>
 
                 <!-- Interamplify -->
                 <span class="hidden text-sm font-medium text-text-muted sm:inline">Interamplify</span>
 
                 <!-- Logout -->
-                <a href="logout.php" class="flex h-8 w-8 items-center justify-center rounded-md border border-border text-text-muted hover:bg-surface hover:text-text" title="Cerrar sesión">
+                <a href="logout.php" class="flex h-8 w-8 items-center justify-center rounded-md border border-border text-text-muted hover:bg-surface hover:text-text" title="Logout">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
                         <polyline points="16 17 21 12 16 7"></polyline>

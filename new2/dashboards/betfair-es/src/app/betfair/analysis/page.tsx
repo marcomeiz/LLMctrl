@@ -37,14 +37,14 @@ export default function BetfairAnalysisPage() {
     return null;
   }
 
-  // Short names for chart labels (Spanish)
+  // Short names for chart labels
   const SHORT_NAMES: { [key in CategoryId]: string } = {
-    1: 'Marca',
+    1: 'Brand',
     2: 'General',
-    3: 'Competencia',
-    4: 'Comercial',
-    5: 'Transaccional',
-    6: 'Transaccional+',
+    3: 'Competition',
+    4: 'Commercial',
+    5: 'Transactional',
+    6: 'Transactional+',
   };
 
   // Prepare chart data
@@ -96,17 +96,17 @@ export default function BetfairAnalysisPage() {
           {/* Page title */}
           <div className="mb-6">
             <div className="flex items-center gap-2">
-              <h1 className="text-lg font-semibold text-text sm:text-xl">Análisis por Categoría</h1>
+              <h1 className="text-lg font-semibold text-text sm:text-xl">Category Analysis</h1>
               <span className="text-lg">🇪🇸</span>
             </div>
             <p className="text-sm text-text-muted">
-              Distribución de clasificaciones por tipo de pregunta
+              Classification distribution by question type
             </p>
           </div>
 
           {/* Chart */}
           <div className="mb-6 rounded-lg border border-border bg-surface p-4 sm:p-6">
-            <h2 className="mb-4 text-sm font-medium text-text">Distribución por Categoría</h2>
+            <h2 className="mb-4 text-sm font-medium text-text">Distribution by Category</h2>
             <div className="h-64 sm:h-80">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={chartData} layout="vertical" margin={{ left: 0, right: 20 }}>
@@ -126,9 +126,9 @@ export default function BetfairAnalysisPage() {
                     }}
                     labelStyle={{ color: colors.text }}
                   />
-                  <Bar dataKey="critical" stackId="a" fill={colors.critical} name="Crítico" />
-                  <Bar dataKey="warning" stackId="a" fill={colors.warning} name="Advertencia" />
-                  <Bar dataKey="opportunity" stackId="a" fill={colors.opportunity} name="Oportunidad" />
+                  <Bar dataKey="critical" stackId="a" fill={colors.critical} name="Critical" />
+                  <Bar dataKey="warning" stackId="a" fill={colors.warning} name="Warning" />
+                  <Bar dataKey="opportunity" stackId="a" fill={colors.opportunity} name="Opportunity" />
                 </BarChart>
               </ResponsiveContainer>
             </div>
@@ -136,15 +136,15 @@ export default function BetfairAnalysisPage() {
             <div className="mt-4 flex justify-center gap-4">
               <div className="flex items-center gap-1.5">
                 <span className="h-3 w-3 rounded" style={{ backgroundColor: colors.critical }} />
-                <span className="text-xs text-text-muted">Crítico</span>
+                <span className="text-xs text-text-muted">Critical</span>
               </div>
               <div className="flex items-center gap-1.5">
                 <span className="h-3 w-3 rounded" style={{ backgroundColor: colors.warning }} />
-                <span className="text-xs text-text-muted">Advertencia</span>
+                <span className="text-xs text-text-muted">Warning</span>
               </div>
               <div className="flex items-center gap-1.5">
                 <span className="h-3 w-3 rounded" style={{ backgroundColor: colors.opportunity }} />
-                <span className="text-xs text-text-muted">Oportunidad</span>
+                <span className="text-xs text-text-muted">Opportunity</span>
               </div>
             </div>
           </div>
@@ -169,22 +169,22 @@ export default function BetfairAnalysisPage() {
                   >
                     <div>
                       <h3 className="text-sm font-medium text-text">{cat.name}</h3>
-                      <p className="text-xs text-text-muted">{cat.total} registros</p>
+                      <p className="text-xs text-text-muted">{cat.total} records</p>
                     </div>
                     <div className="flex items-center gap-4">
                       {/* Quick stats */}
                       <div className="hidden items-center gap-3 sm:flex">
                         <span className="text-xs">
                           <span className="text-critical">{cat.critical}</span>
-                          <span className="text-text-muted"> crítico</span>
+                          <span className="text-text-muted"> critical</span>
                         </span>
                         <span className="text-xs">
                           <span className="text-warning">{cat.warning}</span>
-                          <span className="text-text-muted"> advertencia</span>
+                          <span className="text-text-muted"> warning</span>
                         </span>
                         <span className="text-xs">
                           <span className="text-opportunity">{cat.opportunity}</span>
-                          <span className="text-text-muted"> oportunidad</span>
+                          <span className="text-text-muted"> opportunity</span>
                         </span>
                       </div>
                       {isExpanded ? (
@@ -202,22 +202,22 @@ export default function BetfairAnalysisPage() {
                       <div className="mb-4 flex items-center gap-3 sm:hidden">
                         <span className="text-xs">
                           <span className="text-critical">{cat.critical}</span>
-                          <span className="text-text-muted"> crítico</span>
+                          <span className="text-text-muted"> critical</span>
                         </span>
                         <span className="text-xs">
                           <span className="text-warning">{cat.warning}</span>
-                          <span className="text-text-muted"> advertencia</span>
+                          <span className="text-text-muted"> warning</span>
                         </span>
                         <span className="text-xs">
                           <span className="text-opportunity">{cat.opportunity}</span>
-                          <span className="text-text-muted"> oportunidad</span>
+                          <span className="text-text-muted"> opportunity</span>
                         </span>
                       </div>
 
                       {/* Top triggers */}
                       {topTriggers.length > 0 && (
                         <div className="mb-4">
-                          <span className="text-xs text-text-muted">Triggers principales: </span>
+                          <span className="text-xs text-text-muted">Top triggers: </span>
                           <span className="text-xs text-text">
                             {topTriggers.map(([t, c]) => `${t} (${c})`).join(', ')}
                           </span>
@@ -228,7 +228,7 @@ export default function BetfairAnalysisPage() {
                       {criticalRecords.length > 0 && (
                         <div className="space-y-2">
                           <span className="text-xs font-medium text-text-muted">
-                            Registros críticos:
+                            Critical records:
                           </span>
                           {criticalRecords.map((record) => (
                             <RecordCard key={record.id} record={record} showPreview={false} basePath="/betfair" />
@@ -241,7 +241,7 @@ export default function BetfairAnalysisPage() {
                         href={`/betfair/list?category=${cat.categoryId}`}
                         className="mt-3 inline-block text-xs text-text-muted hover:text-text"
                       >
-                        Ver todos los registros de {cat.name} →
+                        View all {cat.name} records →
                       </Link>
                     </div>
                   )}

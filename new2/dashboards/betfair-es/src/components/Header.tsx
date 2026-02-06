@@ -30,9 +30,9 @@ export default function Header() {
 
         {/* Right: Market badge + Interamplify + Controls */}
         <div className="flex items-center gap-3">
-          {/* Market badge - España */}
+          {/* Market badge - Spain */}
           <span className="rounded-md border border-border bg-surface px-3 py-1.5 text-sm text-text-muted">
-            🇪🇸 España
+            🇪🇸 Spain
           </span>
 
           {/* Interamplify logo */}

@@ -77,7 +77,7 @@ export default function BetfairListPage() {
           {/* Page title */}
           <div className="mb-4">
             <div className="flex items-center gap-2">
-              <h1 className="text-lg font-semibold text-text sm:text-xl">Lista de Registros</h1>
+              <h1 className="text-lg font-semibold text-text sm:text-xl">Records List</h1>
               <span className="text-lg">🇪🇸</span>
             </div>
           </div>
@@ -89,7 +89,7 @@ export default function BetfairListPage() {
               type="text"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              placeholder="Buscar por pregunta, respuesta o trigger..."
+              placeholder="Search by question, answer or trigger..."
               className="w-full rounded-lg border border-border bg-surface py-2.5 pl-10 pr-10 text-sm text-text placeholder-text-muted outline-none transition-colors focus:border-text-muted"
             />
             {query && (
@@ -128,7 +128,7 @@ export default function BetfairListPage() {
                       : 'border-sky-400/50 bg-sky-400/10 text-sky-300/60 hover:border-sky-400/70 hover:text-sky-300/80'
                   }`}
                 >
-                  {cls === 'ALL' ? 'Todos' : cls}
+                  {cls === 'ALL' ? 'All' : cls}
                   {cls === 'ALL' && <span className="ml-1.5 opacity-80">({stats.total})</span>}
                   {cls === 'CRITICAL' && <span className="ml-1.5 opacity-80">({stats.critical})</span>}
                   {cls === 'WARNING' && <span className="ml-1.5 opacity-80">({stats.warning})</span>}
@@ -149,7 +149,7 @@ export default function BetfairListPage() {
                       : 'border-sky-400/50 bg-sky-400/10 text-sky-300/60 hover:border-sky-400/70 hover:text-sky-300/80'
                   }`}
                 >
-                  {cat === 'ALL' ? 'Todas las categorías' : categories.find(c => c.id === cat)?.name}
+                  {cat === 'ALL' ? 'All Categories' : categories.find(c => c.id === cat)?.name}
                 </button>
               ))}
             </div>
@@ -157,8 +157,8 @@ export default function BetfairListPage() {
 
           {/* Results count */}
           <div className="mb-4 text-xs text-text-muted">
-            {filteredRecords.length} registros
-            {(classification !== 'ALL' || category !== 'ALL' || query) && ' (filtrado)'}
+            {filteredRecords.length} records
+            {(classification !== 'ALL' || category !== 'ALL' || query) && ' (filtered)'}
           </div>
 
           {/* Records list */}
@@ -170,7 +170,7 @@ export default function BetfairListPage() {
             ) : (
               <div className="rounded-lg border border-border bg-surface p-8 text-center">
                 <p className="text-sm text-text-muted">
-                  No hay registros que coincidan con los filtros
+                  No records match the filters
                 </p>
               </div>
             )}
