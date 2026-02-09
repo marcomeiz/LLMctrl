@@ -1,0 +1,430 @@
+# Solution Groups Configuration
+# Defines recommended actions for each solution group
+# Bilingual: English (en) and Spanish (es)
+
+solution_groups:
+  VISIBILITY:
+    name:
+      en: "Brand Visibility"
+      es: "Visibilidad de Marca"
+    description:
+      en: "Brand is not mentioned where it should appear"
+      es: "La marca no aparece mencionada donde deberia estar presente"
+    icon: "eye"
+    color: "#3B82F6"
+    actions:
+      - id: "vis_seo_ai"
+        name:
+          en: "AI-Optimized SEO"
+          es: "Optimizacion SEO para IA"
+        description:
+          en: "Create structured content that LLMs can easily index and reference"
+          es: "Crear contenido estructurado que los LLMs puedan indexar y referenciar facilmente"
+        tactics:
+          en:
+            - "Create FAQ pages with exact questions users ask ChatGPT/Perplexity"
+            - "Structure content with schema markup (FAQ, HowTo, Product)"
+            - "Include citable factual data (statistics, specifications)"
+          es:
+            - "Crear paginas FAQ con preguntas exactas que los usuarios hacen a ChatGPT/Perplexity"
+            - "Estructurar contenido con schema markup (FAQ, HowTo, Product)"
+            - "Incluir datos factuales citables (estadisticas, especificaciones)"
+        effort: "high"
+        timeline: "2-4 months"
+        impact: "high"
+
+      - id: "vis_wiki"
+        name:
+          en: "Wikipedia & Knowledge Base Presence"
+          es: "Presencia en Wikipedia y Knowledge Bases"
+        description:
+          en: "Ensure the brand has presence in sources that LLMs consult"
+          es: "Asegurar que la marca tenga presencia en fuentes que los LLMs consultan"
+        tactics:
+          en:
+            - "Create/update Wikipedia page with verifiable sources"
+            - "Presence in Wikidata with structured data"
+            - "Appear in relevant industry directories"
+          es:
+            - "Crear/actualizar pagina de Wikipedia con fuentes verificables"
+            - "Presencia en Wikidata con datos estructurados"
+            - "Aparecer en directorios de industria relevantes"
+        effort: "medium"
+        timeline: "1-3 months"
+        impact: "high"
+
+      - id: "vis_mentions"
+        name:
+          en: "Editorial Mentions Strategy"
+          es: "Estrategia de Menciones Editoriales"
+        description:
+          en: "Get authority media and blogs to mention the brand in relevant contexts"
+          es: "Conseguir que medios y blogs de autoridad mencionen la marca en contextos relevantes"
+        tactics:
+          en:
+            - "Journalist outreach with exclusive data"
+            - "Guest posts on industry blogs"
+            - "Participation in third-party rankings and comparisons"
+          es:
+            - "Outreach a periodistas con datos exclusivos"
+            - "Guest posts en blogs de industria"
+            - "Participacion en rankings y comparativas de terceros"
+        effort: "medium"
+        timeline: "ongoing"
+        impact: "medium"
+
+  SOCIAL_PROOF:
+    name:
+      en: "Social Proof"
+      es: "Prueba Social"
+    description:
+      en: "Concerns about quality, reliability, or user experiences"
+      es: "Dudas sobre calidad, fiabilidad o experiencias de usuarios"
+    icon: "users"
+    color: "#10B981"
+    actions:
+      - id: "sp_testimonials"
+        name:
+          en: "Verified Testimonials Campaign"
+          es: "Campana de Testimonios Verificados"
+        description:
+          en: "Collect and publish success stories from real customers"
+          es: "Recopilar y publicar casos de exito de clientes reales"
+        tactics:
+          en:
+            - "Video interviews with satisfied customers"
+            - "Detailed case studies with success metrics"
+            - "Reviews on third-party platforms (Trustpilot, G2, Capterra)"
+          es:
+            - "Entrevistas en video con clientes satisfechos"
+            - "Case studies detallados con metricas de exito"
+            - "Reviews en plataformas de terceros (Trustpilot, G2, Capterra)"
+        effort: "medium"
+        timeline: "1-2 months"
+        impact: "high"
+
+      - id: "sp_reviews"
+        name:
+          en: "Active Review Management"
+          es: "Gestion Activa de Resenas"
+        description:
+          en: "Monitor and respond to reviews, encourage positive reviews"
+          es: "Monitorear y responder a resenas, incentivar reviews positivas"
+        tactics:
+          en:
+            - "Post-purchase review request system"
+            - "Professional response to negative reviews"
+            - "Highlight improvements made from feedback"
+          es:
+            - "Sistema de solicitud de reviews post-compra"
+            - "Respuesta profesional a criticas negativas"
+            - "Destacar mejoras realizadas a partir de feedback"
+        effort: "low"
+        timeline: "ongoing"
+        impact: "medium"
+
+      - id: "sp_certifications"
+        name:
+          en: "Certifications & Awards"
+          es: "Certificaciones y Reconocimientos"
+        description:
+          en: "Obtain external validation from authorized third parties"
+          es: "Obtener validacion externa de terceros autorizados"
+        tactics:
+          en:
+            - "Industry certifications (ISO, quality, security)"
+            - "Awards and recognition from specialized media"
+            - "Trust seals and extended warranties"
+          es:
+            - "Certificaciones de industria (ISO, calidad, seguridad)"
+            - "Premios y reconocimientos de medios especializados"
+            - "Sellos de confianza y garantias extendidas"
+        effort: "high"
+        timeline: "3-6 months"
+        impact: "high"
+
+      - id: "sp_expert"
+        name:
+          en: "Expert Endorsements"
+          es: "Endorsements de Expertos"
+        description:
+          en: "Get recognized experts to validate the product/service"
+          es: "Conseguir que expertos reconocidos validen el producto/servicio"
+        tactics:
+          en:
+            - "Collaborations with niche influencers"
+            - "Independent expert reviews"
+            - "Participation in specialized podcasts and interviews"
+          es:
+            - "Colaboraciones con influencers de nicho"
+            - "Reviews de expertos independientes"
+            - "Participacion en podcasts y entrevistas especializadas"
+        effort: "medium"
+        timeline: "1-3 months"
+        impact: "medium"
+
+  COMPETITIVE:
+    name:
+      en: "Competitive Positioning"
+      es: "Posicionamiento Competitivo"
+    description:
+      en: "Competitors positioned better or recommended first"
+      es: "Competidores posicionados mejor o recomendados primero"
+    icon: "trophy"
+    color: "#F59E0B"
+    actions:
+      - id: "comp_comparison"
+        name:
+          en: "Direct Comparison Content"
+          es: "Contenido Comparativo Directo"
+        description:
+          en: "Create objective comparisons where the brand stands out"
+          es: "Crear comparativas objetivas donde la marca destaque"
+        tactics:
+          en:
+            - "'Brand vs Competitor' pages with real data"
+            - "Feature comparison tables"
+            - "TCO/total value calculators"
+          es:
+            - "Paginas 'Brand vs Competitor' con datos reales"
+            - "Tablas comparativas de caracteristicas"
+            - "Calculadoras de TCO/valor total"
+        effort: "medium"
+        timeline: "2-4 weeks"
+        impact: "high"
+
+      - id: "comp_differentiation"
+        name:
+          en: "Differentiation Messaging"
+          es: "Mensajes de Diferenciacion"
+        description:
+          en: "Clearly communicate what makes the brand unique"
+          es: "Comunicar claramente que hace unica a la marca"
+        tactics:
+          en:
+            - "Identify and communicate USPs (Unique Selling Points)"
+            - "'Why choose us' content with concrete arguments"
+            - "Highlight exclusive advantages competitors don't offer"
+          es:
+            - "Identificar y comunicar USPs (Unique Selling Points)"
+            - "Contenido 'Por que elegirnos' con argumentos concretos"
+            - "Destacar ventajas exclusivas que competidores no ofrecen"
+        effort: "low"
+        timeline: "1-2 weeks"
+        impact: "medium"
+
+      - id: "comp_category"
+        name:
+          en: "Category Leadership"
+          es: "Liderazgo de Categoria"
+        description:
+          en: "Position as the reference in a specific niche"
+          es: "Posicionarse como referente en un nicho especifico"
+        tactics:
+          en:
+            - "Create educational content that establishes authority"
+            - "Publish proprietary studies and research"
+            - "Define new subcategories where you can be the leader"
+          es:
+            - "Crear contenido educativo que establezca autoridad"
+            - "Publicar estudios e investigaciones propias"
+            - "Definir nuevas subcategorias donde ser lider"
+        effort: "high"
+        timeline: "3-6 months"
+        impact: "high"
+
+  NARRATIVE:
+    name:
+      en: "Narrative Correction"
+      es: "Correccion de Narrativa"
+    description:
+      en: "Outdated or incorrect information affecting perception"
+      es: "Informacion desactualizada o incorrecta que afecta la percepcion"
+    icon: "refresh"
+    color: "#8B5CF6"
+    actions:
+      - id: "nar_press"
+        name:
+          en: "Press Releases with Current Data"
+          es: "Comunicados de Prensa con Datos Actuales"
+        description:
+          en: "Issue official information that corrects incorrect narratives"
+          es: "Emitir informacion oficial que corrija narrativas incorrectas"
+        tactics:
+          en:
+            - "Press releases with updated statistics"
+            - "News releases about recent improvements and changes"
+            - "Distribution to industry and general media"
+          es:
+            - "Press releases con estadisticas actualizadas"
+            - "Notas de prensa sobre mejoras y cambios recientes"
+            - "Distribucion a medios de industria y generalistas"
+        effort: "low"
+        timeline: "1-2 weeks"
+        impact: "medium"
+
+      - id: "nar_factsheet"
+        name:
+          en: "Updated Fact Sheets"
+          es: "Fact Sheets Actualizados"
+        description:
+          en: "Create reference documents with verifiable information"
+          es: "Crear documentos de referencia con informacion verificable"
+        tactics:
+          en:
+            - "Regularly updated 'Facts and Figures' page"
+            - "Infographics with key statistics"
+            - "Downloadable documents for journalists"
+          es:
+            - "Pagina de 'Datos y Cifras' actualizada regularmente"
+            - "Infografias con estadisticas clave"
+            - "Documentos descargables para periodistas"
+        effort: "low"
+        timeline: "1 week"
+        impact: "medium"
+
+      - id: "nar_journalist"
+        name:
+          en: "Journalist Outreach"
+          es: "Outreach a Periodistas"
+        description:
+          en: "Directly contact those who publish incorrect information"
+          es: "Contactar directamente a quienes publican informacion incorrecta"
+        tactics:
+          en:
+            - "Identify articles with outdated information"
+            - "Polite contact offering updated data"
+            - "Facilitate interviews with company spokespersons"
+          es:
+            - "Identificar articulos con informacion desactualizada"
+            - "Contacto educado ofreciendo datos actualizados"
+            - "Facilitar entrevistas con portavoces de la empresa"
+        effort: "medium"
+        timeline: "ongoing"
+        impact: "high"
+
+  OPERATIONAL:
+    name:
+      en: "Operational Improvements"
+      es: "Mejoras Operativas"
+    description:
+      en: "Real business issues that cannot be fixed with content"
+      es: "Problemas reales del negocio que no se solucionan con contenido"
+    icon: "tool"
+    color: "#EF4444"
+    note:
+      en: "These actions require internal client changes"
+      es: "Estas acciones requieren cambios internos del cliente"
+    actions:
+      - id: "op_service"
+        name:
+          en: "Customer Service Improvement"
+          es: "Mejora de Servicio al Cliente"
+        description:
+          en: "Recommendations to improve support experience"
+          es: "Recomendaciones para mejorar la experiencia de soporte"
+        tactics:
+          en:
+            - "Reduce response times"
+            - "Implement live chat or chatbot"
+            - "Create knowledge base for self-service"
+            - "Support team training"
+          es:
+            - "Reducir tiempos de respuesta"
+            - "Implementar chat en vivo o chatbot"
+            - "Crear base de conocimiento para autoservicio"
+            - "Formacion del equipo de soporte"
+        effort: "high"
+        timeline: "1-3 months"
+        impact: "high"
+        requires_client_action: true
+
+      - id: "op_availability"
+        name:
+          en: "Availability Expansion"
+          es: "Expansion de Disponibilidad"
+        description:
+          en: "Recommendations to improve product/service access"
+          es: "Recomendaciones para mejorar acceso al producto/servicio"
+        tactics:
+          en:
+            - "Expand distribution/dealer network"
+            - "Improve stock and delivery times"
+            - "Offer more purchase options (online, financing)"
+          es:
+            - "Ampliar red de distribucion/dealers"
+            - "Mejorar stock y tiempos de entrega"
+            - "Ofrecer mas opciones de compra (online, financiacion)"
+        effort: "high"
+        timeline: "3-6 months"
+        impact: "high"
+        requires_client_action: true
+
+      - id: "op_product"
+        name:
+          en: "Product Feedback"
+          es: "Feedback de Producto"
+        description:
+          en: "Communicate detected product issues to client"
+          es: "Comunicar al cliente los problemas de producto detectados"
+        tactics:
+          en:
+            - "Document frequently mentioned issues"
+            - "Prioritize issues by perception impact"
+            - "Propose improvement roadmap"
+          es:
+            - "Documentar problemas mencionados frecuentemente"
+            - "Priorizar issues por impacto en percepcion"
+            - "Proponer roadmap de mejoras"
+        effort: "low"
+        timeline: "1 week"
+        impact: "variable"
+        requires_client_action: true
+
+      - id: "op_pricing"
+        name:
+          en: "Pricing Strategy Review"
+          es: "Revision de Estrategia de Precio"
+        description:
+          en: "Analysis of value perception vs price"
+          es: "Analisis de percepcion de valor vs precio"
+        tactics:
+          en:
+            - "Price benchmark vs competition"
+            - "Value perception analysis in responses"
+            - "Value communication recommendations"
+          es:
+            - "Benchmark de precios vs competencia"
+            - "Analisis de value perception en respuestas"
+            - "Recomendaciones de comunicacion de valor"
+        effort: "medium"
+        timeline: "2-4 weeks"
+        impact: "medium"
+        requires_client_action: true
+
+# Effort mapping
+effort_levels:
+  low:
+    en: "8-20 hours"
+    es: "8-20 horas"
+  medium:
+    en: "20-60 hours"
+    es: "20-60 horas"
+  high:
+    en: "60+ hours"
+    es: "60+ horas"
+
+# Impact mapping
+impact_levels:
+  low:
+    en: "Incremental improvement"
+    es: "Mejora incremental"
+  medium:
+    en: "Notable metrics improvement"
+    es: "Mejora notable en metricas"
+  high:
+    en: "Significant perception change"
+    es: "Cambio significativo en percepcion"
+  variable:
+    en: "Depends on client implementation"
+    es: "Depende de implementacion del cliente"
