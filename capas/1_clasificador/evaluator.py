@@ -91,10 +91,19 @@ IMPORTANT:
 - Evaluate the OVERALL sentiment considering BOTH question context AND answer content.
 - Consider what NOT being mentioned implies based on the question type.
 
+SOLUTION GROUP (only for WARNING/CRITICAL - use "NONE" for OPPORTUNITY):
+Assign ONE group based on what marketing/content solution would address this issue:
+- VISIBILITY: Brand is not mentioned where it should appear. Solution: SEO/content to increase brand presence in AI responses.
+- SOCIAL_PROOF: Concerns about quality, reliability, user experiences, or trust. Solution: Testimonials, reviews, case studies, PR campaigns.
+- COMPETITIVE: Competitor is positioned better, recommended first, or presented as superior. Solution: Comparison content, differentiation messaging.
+- NARRATIVE: Outdated, incomplete, or incorrect information that can be corrected with facts. Solution: Updated content with accurate data.
+- OPERATIONAL: Real business issues (customer service, availability, pricing, product problems) that cannot be fixed with content alone. Solution: Report to client for internal improvement.
+
 Respond in JSON format. ALL TEXT FIELDS MUST BE IN THE SAME LANGUAGE AS THE ANSWER ABOVE:
 {{
   "detected_language": "English/Spanish/French/etc",
   "classification": "CRITICAL/WARNING/OPPORTUNITY",
+  "solution_group": "VISIBILITY/SOCIAL_PROOF/COMPETITIVE/NARRATIVE/OPERATIONAL/NONE",
   "reason": "brief reason (max 15 words) - SAME LANGUAGE AS ANSWER",
   "triggers_detected": [
     {{
@@ -109,6 +118,7 @@ Respond in JSON format. ALL TEXT FIELDS MUST BE IN THE SAME LANGUAGE AS THE ANSW
 
 CRITICAL RULES:
 - triggers_detected: Only for WARNING/CRITICAL. For OPPORTUNITY, use empty array []
+- solution_group: Only for WARNING/CRITICAL. For OPPORTUNITY, use "NONE"
 - IF THE ANSWER IS IN ENGLISH → ALL fields (reason, trigger reasons, psychological_impact) MUST BE IN ENGLISH
 - IF THE ANSWER IS IN SPANISH → ALL fields MUST BE IN SPANISH
 - IF THE ANSWER IS IN FRENCH → ALL fields MUST BE IN FRENCH
@@ -148,12 +158,14 @@ CRITICAL RULES:
             reason = parsed.get('reason', '')
             triggers = parsed.get('triggers_detected', [])
             psychological_impact = parsed.get('psychological_impact', '')
+            solution_group = parsed.get('solution_group', 'NONE').upper()
         except (json.JSONDecodeError, IndexError):
             # Fallback: extract classification from text
             classification = 'WARNING'
             reason = ''
             triggers = []
             psychological_impact = ''
+            solution_group = 'NONE'
             for valid in ['CRITICAL', 'WARNING', 'OPPORTUNITY']:
                 if valid in content.upper():
                     classification = valid
@@ -168,15 +180,33 @@ CRITICAL RULES:
             else:
                 classification = 'WARNING'
 
-        # Clear triggers for OPPORTUNITY
+        # Validate solution_group
+        valid_groups = ['VISIBILITY', 'SOCIAL_PROOF', 'COMPETITIVE', 'NARRATIVE', 'OPERATIONAL', 'NONE']
+        if solution_group not in valid_groups:
+            solution_group = 'NONE'
+
+        # Clear triggers and solution_group for OPPORTUNITY
         if classification == 'OPPORTUNITY':
             triggers = []
+            solution_group = 'NONE'
 
-        return {'classification': classification, 'reason': reason, 'triggers_detected': triggers, 'psychological_impact': psychological_impact}
+        return {
+            'classification': classification,
+            'reason': reason,
+            'triggers_detected': triggers,
+            'psychological_impact': psychological_impact,
+            'solution_group': solution_group
+        }
 
     except requests.exceptions.RequestException as e:
         print(f"  API error: {e}")
-        return {'classification': 'WARNING', 'reason': 'Error en API', 'triggers_detected': [], 'psychological_impact': ''}
+        return {
+            'classification': 'WARNING',
+            'reason': 'Error en API',
+            'triggers_detected': [],
+            'psychological_impact': '',
+            'solution_group': 'NONE'
+        }
 
 
 def evaluate(
@@ -206,6 +236,7 @@ def evaluate(
 
     evaluated_data = []
     stats = {'CRITICAL': 0, 'WARNING': 0, 'OPPORTUNITY': 0}
+    group_stats = {'VISIBILITY': 0, 'SOCIAL_PROOF': 0, 'COMPETITIVE': 0, 'NARRATIVE': 0, 'OPERATIONAL': 0, 'NONE': 0}
     no_mention_count = 0
     no_mention_critical = 0
 
@@ -226,6 +257,7 @@ def evaluate(
         reason = result['reason']
         triggers = result['triggers_detected']
         psychological_impact = result['psychological_impact']
+        solution_group = result['solution_group']
 
         if not mention:
             no_mention_count += 1
@@ -235,6 +267,7 @@ def evaluate(
         time.sleep(delay)  # Rate limiting
 
         stats[classification] += 1
+        group_stats[solution_group] += 1
 
         # Progress indicator
         if (i + 1) % 10 == 0 or i == len(data) - 1:
@@ -248,22 +281,35 @@ def evaluate(
             'classification': classification,
             'classification_reason': reason,
             'triggers_detected': triggers,
-            'psychological_impact': psychological_impact
+            'psychological_impact': psychological_impact,
+            'solution_group': solution_group
         }
         evaluated_data.append(evaluated_record)
 
     # Final stats
     total = len(evaluated_data)
+    problems = stats['CRITICAL'] + stats['WARNING']
     print(f"\n{'='*50}")
     print(f"EVALUATION COMPLETE")
     print(f"{'='*50}")
     print(f"Total: {total}")
-    print(f"  CRITICAL:    {stats['CRITICAL']:3d} ({stats['CRITICAL']/total*100:5.1f}%) {'🔴' * (stats['CRITICAL'] // 10)}")
-    print(f"  WARNING:     {stats['WARNING']:3d} ({stats['WARNING']/total*100:5.1f}%) {'🟡' * (stats['WARNING'] // 10)}")
-    print(f"  OPPORTUNITY: {stats['OPPORTUNITY']:3d} ({stats['OPPORTUNITY']/total*100:5.1f}%) {'🟢' * (stats['OPPORTUNITY'] // 10)}")
+    print(f"  CRITICAL:    {stats['CRITICAL']:3d} ({stats['CRITICAL']/total*100:5.1f}%)")
+    print(f"  WARNING:     {stats['WARNING']:3d} ({stats['WARNING']/total*100:5.1f}%)")
+    print(f"  OPPORTUNITY: {stats['OPPORTUNITY']:3d} ({stats['OPPORTUNITY']/total*100:5.1f}%)")
     print(f"\n  No mention total: {no_mention_count}")
     print(f"    → CRITICAL: {no_mention_critical}")
     print(f"    → Other (context-aware): {no_mention_count - no_mention_critical}")
+
+    # Solution group stats (only for problems)
+    if problems > 0:
+        print(f"\n{'='*50}")
+        print(f"SOLUTION GROUPS (for {problems} WARNING/CRITICAL)")
+        print(f"{'='*50}")
+        for group in ['VISIBILITY', 'SOCIAL_PROOF', 'COMPETITIVE', 'NARRATIVE', 'OPERATIONAL']:
+            count = group_stats[group]
+            if count > 0:
+                pct = count / problems * 100
+                print(f"  {group:12s}: {count:3d} ({pct:5.1f}%)")
 
     # Save output
     with open(output_path, 'w', encoding='utf-8') as f:

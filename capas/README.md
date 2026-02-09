@@ -46,6 +46,7 @@ python evaluator.py -i output.json -o evaluated.json -b "BrandName"
 | `citations` | classifier | Sources cited |
 | `classification` | evaluator | CRITICAL / WARNING / OPPORTUNITY |
 | `classification_reason` | evaluator | Brief reason (in answer's language) |
+| `solution_group` | evaluator | Solution type: VISIBILITY / SOCIAL_PROOF / COMPETITIVE / NARRATIVE / OPERATIONAL |
 | `triggers_detected` | evaluator | Problematic triggers (WARNING/CRITICAL only) |
 | `psychological_impact` | evaluator | How answer affects user perception/decision |
 

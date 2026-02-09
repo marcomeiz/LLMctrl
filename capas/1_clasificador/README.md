@@ -107,14 +107,16 @@ Final JSON with all enrichment fields:
     "citations": ["Wikipedia", "Reuters"],
     "classification": "WARNING",
     "classification_reason": "Menciona pros y contras sin clara recomendación",
+    "solution_group": "SOCIAL_PROOF",
     "triggers_detected": [
       {
-        "trigger": "slow withdrawal",
+        "trigger": "reliability concerns",
         "type": "WARNING",
-        "context": "Los retiros pueden tardar 2-5 días",
-        "reason": "Tiempo de espera puede generar frustración"
+        "context": "Some owners report issues with...",
+        "reason": "Creates doubt about product quality"
       }
-    ]
+    ],
+    "psychological_impact": "User perceives mixed signals..."
   }
 ]
 ```
@@ -129,6 +131,7 @@ Final JSON with all enrichment fields:
 | `citations` | classifier | list[str] | Sources cited |
 | `classification` | evaluator | string | CRITICAL / WARNING / OPPORTUNITY |
 | `classification_reason` | evaluator | string | Brief reason for classification (in answer's language) |
+| `solution_group` | evaluator | string | Solution type for WARNING/CRITICAL (NONE for OPPORTUNITY) |
 | `triggers_detected` | evaluator | list[obj] | Problematic triggers (only for WARNING/CRITICAL) |
 | `psychological_impact` | evaluator | string | Psychological analysis of how the answer affects user perception |
 
@@ -164,6 +167,20 @@ The evaluator uses LLM-based analysis considering **both question context and an
 | Negative answer | CRITICAL 🔴 | Unfavorable for brand |
 
 **Key improvement**: "Brand not mentioned" is no longer auto-CRITICAL. The LLM considers whether not being mentioned is positive (e.g., "avoid" questions) or negative (direct brand questions).
+
+### Solution Groups
+
+For WARNING/CRITICAL classifications, the evaluator assigns a `solution_group` to categorize what type of marketing/content solution would address the issue:
+
+| Group | Problem Type | Recommended Solution |
+|-------|--------------|---------------------|
+| `VISIBILITY` | Brand not mentioned where it should appear | SEO/content to increase brand presence in AI responses |
+| `SOCIAL_PROOF` | Concerns about quality, reliability, user experiences | Testimonials, reviews, case studies, PR campaigns |
+| `COMPETITIVE` | Competitor positioned better or recommended first | Comparison content, differentiation messaging |
+| `NARRATIVE` | Outdated or incorrect information | Updated content with accurate data |
+| `OPERATIONAL` | Real business issues (service, availability, pricing) | Report to client for internal improvement |
+
+This allows grouping problems by solution type rather than analyzing each case individually.
 
 ## Evaluator Model
 
