@@ -103,55 +103,65 @@ export default function BydListPage() {
           </div>
 
           {/* Filters */}
-          <div className="mb-4 space-y-3">
+          <div className="mb-6 space-y-3">
             {/* Classification filters */}
-            <div className="flex flex-wrap gap-2">
-              {CLASSIFICATIONS.map((cls) => (
-                <button
-                  key={cls}
-                  onClick={() => setClassification(cls)}
-                  className={`rounded-lg border-2 px-4 py-2 text-sm font-semibold transition-all ${
-                    cls === 'CRITICAL'
-                      ? classification === cls
-                        ? 'border-red-500 bg-red-500/20 text-red-400 shadow-lg shadow-red-500/20'
-                        : 'border-red-500/50 bg-red-500/10 text-red-400/60 hover:border-red-500/70 hover:text-red-400/80'
-                      : cls === 'WARNING'
-                      ? classification === cls
-                        ? 'border-amber-400 bg-amber-400/20 text-amber-300 shadow-lg shadow-amber-400/20'
-                        : 'border-amber-400/50 bg-amber-400/10 text-amber-300/60 hover:border-amber-400/70 hover:text-amber-300/80'
-                      : cls === 'OPPORTUNITY'
-                      ? classification === cls
-                        ? 'border-emerald-400 bg-emerald-400/20 text-emerald-300 shadow-lg shadow-emerald-400/20'
-                        : 'border-emerald-400/50 bg-emerald-400/10 text-emerald-300/60 hover:border-emerald-400/70 hover:text-emerald-300/80'
-                      : classification === cls
-                      ? 'border-sky-400 bg-sky-400/20 text-sky-300 shadow-lg shadow-sky-400/20'
-                      : 'border-sky-400/50 bg-sky-400/10 text-sky-300/60 hover:border-sky-400/70 hover:text-sky-300/80'
-                  }`}
-                >
-                  {cls === 'ALL' ? 'All' : cls}
-                  {cls === 'ALL' && <span className="ml-1.5 opacity-80">({stats.total})</span>}
-                  {cls === 'CRITICAL' && <span className="ml-1.5 opacity-80">({stats.critical})</span>}
-                  {cls === 'WARNING' && <span className="ml-1.5 opacity-80">({stats.warning})</span>}
-                  {cls === 'OPPORTUNITY' && <span className="ml-1.5 opacity-80">({stats.opportunity})</span>}
-                </button>
-              ))}
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="text-xs font-medium text-text-muted">Status:</span>
+              {CLASSIFICATIONS.map((cls) => {
+                const isActive = classification === cls;
+                const count = cls === 'ALL' ? stats.total
+                  : cls === 'CRITICAL' ? stats.critical
+                  : cls === 'WARNING' ? stats.warning
+                  : stats.opportunity;
+
+                return (
+                  <button
+                    key={cls}
+                    onClick={() => setClassification(cls)}
+                    className={`flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium transition-all ${
+                      isActive
+                        ? cls === 'CRITICAL' ? 'bg-critical/15 text-critical'
+                          : cls === 'WARNING' ? 'bg-warning/15 text-warning'
+                          : cls === 'OPPORTUNITY' ? 'bg-opportunity/15 text-opportunity'
+                          : 'bg-text text-background'
+                        : 'bg-surface text-text-muted hover:bg-border hover:text-text'
+                    }`}
+                  >
+                    {cls !== 'ALL' && (
+                      <span className={`h-1.5 w-1.5 rounded-full ${
+                        cls === 'CRITICAL' ? 'bg-critical'
+                        : cls === 'WARNING' ? 'bg-warning'
+                        : 'bg-opportunity'
+                      }`} />
+                    )}
+                    <span>{cls === 'ALL' ? 'All' : cls.charAt(0) + cls.slice(1).toLowerCase()}</span>
+                    <span className="opacity-60">{count}</span>
+                  </button>
+                );
+              })}
             </div>
 
             {/* Category filters */}
-            <div className="flex flex-wrap gap-2">
-              {CATEGORIES.map((cat) => (
-                <button
-                  key={cat}
-                  onClick={() => setCategory(cat)}
-                  className={`rounded-lg border-2 px-4 py-2 text-sm font-semibold transition-all ${
-                    category === cat
-                      ? 'border-sky-400 bg-sky-400/20 text-sky-300 shadow-lg shadow-sky-400/20'
-                      : 'border-sky-400/50 bg-sky-400/10 text-sky-300/60 hover:border-sky-400/70 hover:text-sky-300/80'
-                  }`}
-                >
-                  {cat === 'ALL' ? 'All Categories' : categories.find(c => c.id === cat)?.name}
-                </button>
-              ))}
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="text-xs font-medium text-text-muted">Category:</span>
+              {CATEGORIES.map((cat) => {
+                const isActive = category === cat;
+                const label = cat === 'ALL' ? 'All' : categories.find(c => c.id === cat)?.name;
+
+                return (
+                  <button
+                    key={cat}
+                    onClick={() => setCategory(cat)}
+                    className={`rounded-full px-3 py-1 text-xs font-medium transition-all ${
+                      isActive
+                        ? 'bg-text text-background'
+                        : 'bg-surface text-text-muted hover:bg-border hover:text-text'
+                    }`}
+                  >
+                    {label}
+                  </button>
+                );
+              })}
             </div>
           </div>
 
